@@ -4,17 +4,8 @@ package server
 import (
 	"fmt"
 	"log"
-	"user-server/lib/link"
-	"user-server/lib/link/codec"
+	"user-server/lib/session"
 )
-
-type AddReq struct {
-	A, B int
-}
-
-type AddRsp struct {
-	C int
-}
 
 // RequestParams 请求参数格式
 type RequestParams struct {
@@ -40,34 +31,26 @@ func Hello() {
 
 // Run 启动服务
 func Run() {
-	json := codec.Json()
-	json.Register(RequestParams{})
-	json.Register(Response{})
-	json.Register(AddReq{})
-	json.Register(AddRsp{})
 
 	addr := fmt.Sprintf("%s:%d", Conf.Main.Host, Conf.Main.Port)
-	server, err := link.Listen("tcp", addr, json, 0 /* sync send */, link.HandlerFunc(funcTransfer))
+	err := session.Listen("tcp", addr, funcTransfer)
 	checkErr(err)
-
-	log.Println("server address is:", addr)
-	server.Serve()
 }
 
 // 根据传入的 route 参数来使用不同的函数
-func funcTransfer(session *link.Session) {
+func funcTransfer(session session.Session) {
 	for {
-		req, err := session.Receive()
-		checkErr(err)
+		// req, err := session.Receive()
+		// checkErr(err)
 
-		log.Println("server: get reuqest =>", req)
-		route, _ := req.(map[string]interface{})
-		log.Println("current route is:", route["route"])
+		// log.Println("server: get reuqest =>", req)
+		// route, _ := req.(map[string]interface{})
+		// log.Println("current route is:", route["route"])
 
-		err = session.Send(&Response{
-			Code: 200,
-		})
-		checkErr(err)
+		// err = session.Send(&Response{
+		// 	Code: 200,
+		// })
+		// checkErr(err)
 	}
 }
 
