@@ -31,15 +31,18 @@ func Hello() {
 
 // Run 启动服务
 func Run() {
+	var mux mux
 
 	addr := fmt.Sprintf("%s:%d", Conf.Main.Host, Conf.Main.Port)
-	err := session.Listen("tcp", addr, funcTransfer)
+	err := session.Listen("tcp", addr, mux.handler)
+
 	checkErr(err)
 }
 
 // 根据传入的 route 参数来使用不同的函数
-func funcTransfer(session session.Session) {
+func (m *mux) ServerTcp(session *session.Session) {
 	for {
+		conn := session.conn.Read()
 		// req, err := session.Receive()
 		// checkErr(err)
 
