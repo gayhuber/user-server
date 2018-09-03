@@ -1,5 +1,5 @@
-// Package server config 这里放置了相关的所有配置
-package server
+// Package lib config 这里放置了相关的所有配置
+package lib
 
 import (
 	"fmt"
