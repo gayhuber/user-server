@@ -28,9 +28,10 @@ func main() {
 func HandleJSON(session *lib.Session) {
 
 	fmt.Println("hello", session.Request)
-	n, err := session.Conn.Write([]byte("GET / HTTP/1.1 \r\n\r"))
-	if err != nil {
-		fmt.Println("写入错误", err)
-	}
-	fmt.Println("写入数据:", n)
+
+	session.Send(200, lib.H{
+		"message": "admin hi",
+		"param":   "example",
+		"raw":     session.Request.Params,
+	})
 }

@@ -2,8 +2,7 @@ package lib
 
 import (
 	"bufio"
-	"encoding/json"
-	"fmt"
+	// "encoding/json"
 	"github.com/pkg/errors"
 	"io"
 	"log"
@@ -24,7 +23,7 @@ func Open(addr string) (*bufio.ReadWriter, error) {
 	// Dial the remote process.
 	// Note that the local port is chosen on the fly. If the local port
 	// must be a specific one, use DialTCP() instead.
-	fmt.Println("Dial " + addr)
+	log.Println("Dial " + addr)
 	conn, err := net.Dial("tcp", addr)
 	if err != nil {
 		return nil, errors.Wrap(err, "Dialing "+addr+" failed")
@@ -43,16 +42,6 @@ type TCPServer struct {
 
 	// map不是线程安全的，所以需要读写锁控制
 	m sync.RWMutex
-}
-
-// Session 会话信息
-type Session struct {
-	Conn     net.Conn
-	Request  Request
-	Response interface{}
-	RwMutex  sync.RWMutex
-	Mutex    sync.Mutex
-	id       uint64
 }
 
 // NewTCPServer 初始化服务
@@ -76,6 +65,16 @@ type Request struct {
 	Params Params
 }
 
+// Response 回复时的结构
+type Response struct {
+	Code    int         `json:"code"`
+	Message string      `json:"msg"`
+	Data    interface{} `json:"data"`
+}
+
+// H 承接返回内容的格式
+type H map[string]interface{}
+
 // Params 参数的类型
 type Params map[string]interface{}
 
@@ -85,44 +84,36 @@ func (serv *TCPServer) handleMessage(conn net.Conn) {
 		bufio.NewWriter(conn))
 	defer conn.Close()
 
-	by, err := rw.ReadBytes('\n')
-	switch {
-	case err == io.EOF:
-		fmt.Println("读取完成.")
-		return
-	case err != nil:
-		fmt.Println("读取出错")
-		return
+	// 错误处理
+	defer func() {
+		if err := recover(); err != nil {
+			log.Println("出了错：", err)
+		}
+	}()
+
+	for {
+		session, err := NewSession(rw, conn)
+		switch {
+		case err == io.EOF:
+			log.Println("读取完成.")
+			return
+		case err != nil:
+			log.Println("读取出错")
+			return
+		}
+
+		serv.m.RLock()
+		defer serv.m.RUnlock()
+		handleFunc, ok := serv.handler[session.Request.Route]
+
+		if !ok {
+			log.Println("找不到对应路由规则: ", session.Request.Route)
+			return
+		}
+
+		//具体处理链接数据
+		handleFunc(session)
 	}
-
-	log.Println("获取请求:", string(by))
-
-	var params Params
-	err = json.Unmarshal(by, &params)
-	if err != nil {
-		log.Println("json 格式不正确, error:", err)
-	}
-	fmt.Println("收到 map 类参数: ", params)
-
-	session := Session{
-		Conn: conn,
-		Request: Request{
-			Route: params["route"].(string),
-			LogID: params["log_id"].(string),
-		},
-	}
-
-	serv.m.RLock()
-	defer serv.m.RUnlock()
-	handleCmd, ok := serv.handler[session.Request.Route]
-
-	if !ok {
-		fmt.Println("找不到对应路由规则: ", session.Request.Route)
-		return
-	}
-
-	//具体处理链接数据
-	handleCmd(&session)
 }
 
 // Listen 监听端口
@@ -130,13 +121,13 @@ func (serv *TCPServer) Listen() error {
 	var err error
 	serv.listener, err = net.Listen("tcp", Port)
 	if err != nil {
-		return errors.Wrap(err, "TCP服务无法监听在端口"+Port)
+		return errors.Wrap(err, "TCP服务无法监听端口:"+Port)
 	}
-	fmt.Println(" 服务监听成功：", serv.listener.Addr().String())
+	log.Println(" 服务监听成功：", serv.listener.Addr().String())
 	for {
 		conn, err := serv.listener.Accept()
 		if err != nil {
-			fmt.Println("新请求监听失败!")
+			log.Println("新请求监听失败!")
 			continue
 		}
 		// 开始处理新链接数据

@@ -14,6 +14,7 @@ type Config struct {
 type main struct {
 	Host string `json:"host"`
 	Port int    `json:"port"`
+	EOF  string `json:"eof"`
 }
 
 var (
