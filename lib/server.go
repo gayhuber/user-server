@@ -63,10 +63,10 @@ func NewTCPServer() *TCPServer {
 }
 
 // AddHandleFunc 添加数据类型处理方法
-func (e *TCPServer) AddHandleFunc(name string, f HandleFunc) {
-	e.m.Lock()
-	e.handler[name] = f
-	e.m.Unlock()
+func (serv *TCPServer) AddHandleFunc(name string, f HandleFunc) {
+	serv.m.Lock()
+	serv.handler[name] = f
+	serv.m.Unlock()
 }
 
 // Request 的结构
@@ -80,7 +80,7 @@ type Request struct {
 type Params map[string]interface{}
 
 // handleMessage 验证请求数据路由，并发送到对应处理函数
-func (e *TCPServer) handleMessage(conn net.Conn) {
+func (serv *TCPServer) handleMessage(conn net.Conn) {
 	rw := bufio.NewReadWriter(bufio.NewReader(conn),
 		bufio.NewWriter(conn))
 	defer conn.Close()
@@ -112,9 +112,9 @@ func (e *TCPServer) handleMessage(conn net.Conn) {
 		},
 	}
 
-	e.m.RLock()
-	defer e.m.RUnlock()
-	handleCmd, ok := e.handler[session.Request.Route]
+	serv.m.RLock()
+	defer serv.m.RUnlock()
+	handleCmd, ok := serv.handler[session.Request.Route]
 
 	if !ok {
 		fmt.Println("找不到对应路由规则: ", session.Request.Route)
@@ -126,21 +126,21 @@ func (e *TCPServer) handleMessage(conn net.Conn) {
 }
 
 // Listen 监听端口
-func (e *TCPServer) Listen() error {
+func (serv *TCPServer) Listen() error {
 	var err error
-	e.listener, err = net.Listen("tcp", Port)
+	serv.listener, err = net.Listen("tcp", Port)
 	if err != nil {
 		return errors.Wrap(err, "TCP服务无法监听在端口"+Port)
 	}
-	fmt.Println(" 服务监听成功：", e.listener.Addr().String())
+	fmt.Println(" 服务监听成功：", serv.listener.Addr().String())
 	for {
-		conn, err := e.listener.Accept()
+		conn, err := serv.listener.Accept()
 		if err != nil {
 			fmt.Println("新请求监听失败!")
 			continue
 		}
 		// 开始处理新链接数据
-		go e.handleMessage(conn)
+		go serv.handleMessage(conn)
 	}
 
 }
