@@ -29,6 +29,8 @@ func HandleJSON(session *lib.Session) {
 
 	fmt.Println("hello", session.Request)
 
+	session.Log.Info("tesetse")
+
 	session.Send(200, lib.H{
 		"message": "admin hi",
 		"param":   "example",

@@ -10,10 +10,9 @@ go version go1.9.2 darwin/amd64
 
 # 启动
 ```bash
-go run main.go
+cp config-example.json config.json && go run main.go
 ```
-
-
 
 # 使用到的工具包
 [viper](https://github.com/spf13/viper)
+[beego-log](https://github.com/astaxie/beego/logs)

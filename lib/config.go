@@ -6,17 +6,24 @@ import (
 	"fmt"
 	"github.com/spf13/viper"
 	"os"
+	// log "user-server/tools/loghandler"
 )
 
 // Config 整个服务的配置结构
 type Config struct {
-	Main main
+	Main mainConfig
+	Log  logConfig
 }
 
-type main struct {
+type mainConfig struct {
 	Host string `json:"host"`
 	Port int    `json:"port"`
 	EOF  string `json:"eof"`
+}
+
+type logConfig struct {
+	Path string `json:"path"`
+	Mode string `json:"mode"`
 }
 
 var (
@@ -27,6 +34,7 @@ var (
 	c string
 )
 
+// 初始化加载配置文件
 func init() {
 	// 错误处理
 	defer func() {
@@ -68,8 +76,6 @@ func NewConfig() *Config {
 
 // InitConfig 初始化配置
 func InitConfig() (err error) {
-
-	Conf = NewConfig()
 
 	viper.SetConfigName("config")
 	viper.AddConfigPath(c)

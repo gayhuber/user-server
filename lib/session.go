@@ -8,16 +8,10 @@ import (
 	"net"
 	"sync"
 	"sync/atomic"
+	logs "user-server/tools/loghandler"
 )
 
 var globalSessionID uint64
-
-// EOF 用来区分 tcp 数据边界的
-var EOF = "\r\n\r"
-
-// func init(){
-// 	EOF =
-// }
 
 // Session 会话信息
 type Session struct {
@@ -27,6 +21,7 @@ type Session struct {
 	RwMutex  sync.RWMutex
 	Mutex    sync.Mutex
 	id       uint64
+	Log      logs.Logger
 }
 
 // NewSession 新建 session
@@ -56,6 +51,8 @@ func NewSession(rw *bufio.ReadWriter, conn net.Conn) (*Session, error) {
 		id: atomic.AddUint64(&globalSessionID, 1),
 	}
 
+	session.Log = logs.NewLog(session.Request.LogID, Conf.Log.Path, Conf.Log.Mode)
+
 	return session, nil
 }
 
@@ -72,7 +69,7 @@ func (s *Session) Send(code int, obj interface{}) {
 
 	s.Conn.Write(jsons)
 	// 输入结束标志
-	s.Conn.Write([]byte(EOF))
+	s.Conn.Write([]byte(Conf.Main.EOF))
 
 	log.Println("输出 json:", string(jsons))
 }

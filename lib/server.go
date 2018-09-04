@@ -3,6 +3,7 @@ package lib
 import (
 	"bufio"
 	// "encoding/json"
+	"fmt"
 	"github.com/pkg/errors"
 	"io"
 	"log"
@@ -119,7 +120,8 @@ func (serv *TCPServer) handleMessage(conn net.Conn) {
 // Listen 监听端口
 func (serv *TCPServer) Listen() error {
 	var err error
-	serv.listener, err = net.Listen("tcp", Port)
+	addr := fmt.Sprintf("%s:%d", Conf.Main.Host, Conf.Main.Port)
+	serv.listener, err = net.Listen("tcp", addr)
 	if err != nil {
 		return errors.Wrap(err, "TCP服务无法监听端口:"+Port)
 	}

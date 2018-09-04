@@ -2,3 +2,4 @@
 vendor/*
 !vendor/vendor.json
 config.json
+logs/*
