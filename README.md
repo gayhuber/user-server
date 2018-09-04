@@ -14,6 +14,12 @@ cp config-example.json config.json && go run main.go
 ```
 
 # 使用到的工具包
-[viper](https://github.com/spf13/viper)
-[beego-log](https://github.com/astaxie/beego/logs)
-这里的 vendor 包使用的是 `govendor` 工具来管理, 当想添加需要的库时,可以运行`govendor get xxx`来加载到 vendor 目录中
+* [viper](https://github.com/spf13/viper)
+* [beego-log](https://github.com/astaxie/beego/logs)
+
+这里的 vendor 包使用的是 [govendor](https://github.com/kardianos/govendor) 工具来管理,
+```bash
+govendor add -tree xxx   // 加载本地库到 vendor 中
+govendor fetch xxx       // 从远程拉取库到 vendor
+```
+ 当想添加需要的库时,可以运行`govendor get xxx`来把本地的库加载到 vendor 目录中,
