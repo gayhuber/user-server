@@ -1,0 +1,21 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "2ErmCRXCfSCAu1xHaOIHCk7fRgk=",
+			"path": "github.com/astaxie/beego/logs",
+			"revision": "bf5c5626ab429e66d88602e1ab1ab5fbf4629a01",
+			"revisionTime": "2017-12-06T15:37:36Z",
+			"tree": true
+		},
+		{
+			"checksumSHA1": "3PP3NFLgQ1L70lMS31+ZIP5hVvk=",
+			"path": "github.com/spf13/viper",
+			"revision": "907c19d40d9a6c9bb55f040ff4ae45271a4754b9",
+			"revisionTime": "2018-06-28T09:55:33Z",
+			"tree": true
+		}
+	],
+	"rootPath": "user-server"
+}
