@@ -10,10 +10,23 @@
 			"tree": true
 		},
 		{
+			"checksumSHA1": "K2x9czFwwfYcB6GyZCqZmJsa7gE=",
+			"path": "github.com/jinzhu/gorm",
+			"revision": "32455088f24d6b1e9a502fb8e40fdc16139dbea8",
+			"revisionTime": "2018-08-18T23:14:33Z"
+		},
+		{
 			"checksumSHA1": "3PP3NFLgQ1L70lMS31+ZIP5hVvk=",
 			"path": "github.com/spf13/viper",
 			"revision": "907c19d40d9a6c9bb55f040ff4ae45271a4754b9",
 			"revisionTime": "2018-06-28T09:55:33Z",
+			"tree": true
+		},
+		{
+			"checksumSHA1": "OeejAgYZo8WrCkYxVtYsPhkZIzY=",
+			"path": "golang.org/x/text",
+			"revision": "8c34f848e18c4bd34d02db7f19a0ed1a0a8f5852",
+			"revisionTime": "2018-03-01T21:24:51Z",
 			"tree": true
 		}
 	],
