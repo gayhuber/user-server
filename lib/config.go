@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/spf13/viper"
 	"os"
-	// log "user-server/tools/loghandler"
 )
 
 // Config 整个服务的配置结构

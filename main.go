@@ -9,7 +9,7 @@ import (
 
 func server() error {
 	TCPServer := lib.NewTCPServer()
-	TCPServer.AddHandleFunc("test/index", HandleJSON)
+	TCPServer.AddHandleFunc("demo/test", HandleJSON)
 	TCPServer.AddHandleFunc("activity/contact/index", HandleJSON)
 
 	// 开始监听
@@ -32,7 +32,7 @@ func HandleJSON(session *lib.Session) {
 	session.Log.Info("tesetse")
 
 	session.Send(200, lib.H{
-		"message": "admin hi",
+		"message": "this is from server",
 		"param":   "example",
 		"raw":     session.Request.Params,
 	})
