@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/pkg/errors"
+	"os"
 	"time"
 	"user-server/lib"
 )
@@ -20,6 +21,7 @@ func main() {
 	err := server()
 	if err != nil {
 		fmt.Println("Error:", errors.WithStack(err))
+		os.Exit(0)
 	}
 	time.Sleep(time.Second * 100)
 }

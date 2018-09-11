@@ -7,5 +7,16 @@
     "log":{
         "path": "./logs/app.log",
         "mode": "file"
+    },
+    "db":{
+        "test":{
+            "db_name": "test",
+            "host":"127.0.0.1",
+            "oprt": "33060",
+            "username": "root",
+            "password": "123123",
+            "max_open_conn":"500",
+            "max_idle_conn":"200"
+        }
     }
 }

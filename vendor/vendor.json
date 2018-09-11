@@ -16,6 +16,12 @@
 			"revisionTime": "2018-08-18T23:14:33Z"
 		},
 		{
+			"checksumSHA1": "ljd3FhYRJ91cLZz3wsH9BQQ2JbA=",
+			"path": "github.com/pkg/errors",
+			"revision": "816c9085562cd7ee03e7f8188a1cfd942858cded",
+			"revisionTime": "2018-03-11T21:45:15Z"
+		},
+		{
 			"checksumSHA1": "3PP3NFLgQ1L70lMS31+ZIP5hVvk=",
 			"path": "github.com/spf13/viper",
 			"revision": "907c19d40d9a6c9bb55f040ff4ae45271a4754b9",

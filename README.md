@@ -16,6 +16,7 @@ cp config-example.json config.json && go run main.go
 # 使用到的工具包
 * [viper](https://github.com/spf13/viper)
 * [beego-log](https://github.com/astaxie/beego/logs)
+* [gorm](https://github.com/jinzhu/gorm)  [中文文档](https://jasperxu.github.io/gorm-zh/)
 
 这里的 vendor 包使用的是 [govendor](https://github.com/kardianos/govendor) 工具来管理,
 ```bash

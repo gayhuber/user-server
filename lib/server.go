@@ -9,6 +9,8 @@ import (
 	"log"
 	"net"
 	"sync"
+	// 引入配置文件
+	. "user-server/config"
 )
 
 const (

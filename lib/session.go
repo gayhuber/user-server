@@ -9,6 +9,8 @@ import (
 	"sync"
 	"sync/atomic"
 	logs "user-server/tools/loghandler"
+	// 引入配置文件
+	. "user-server/config"
 )
 
 var globalSessionID uint64

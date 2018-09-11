@@ -1,5 +1,5 @@
-// Package lib config 这里放置了相关的所有配置
-package lib
+// Package config 这里放置了相关的所有配置
+package config
 
 import (
 	"flag"
@@ -12,6 +12,18 @@ import (
 type Config struct {
 	Main mainConfig
 	Log  logConfig
+	DB   map[string]DBConfig `json:"db"`
+}
+
+//DBConfig 数据库配置文件
+type DBConfig struct {
+	Database    string `json:"database"`
+	Username    string `json:"username"`
+	Password    string `json:"password"`
+	MaxOpenConn int    `json:"max_open_conn"`
+	MaxIdleConn int    `json:"max_idle_conn"`
+	Port        int    `json:"port"`
+	Host        string `json:"host"`
 }
 
 type mainConfig struct {
