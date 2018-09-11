@@ -10,7 +10,7 @@ import (
 	"sync/atomic"
 	logs "user-server/tools/loghandler"
 	// 引入配置文件
-	. "user-server/config"
+	"user-server/config"
 )
 
 var globalSessionID uint64
@@ -53,7 +53,7 @@ func NewSession(rw *bufio.ReadWriter, conn net.Conn) (*Session, error) {
 		id: atomic.AddUint64(&globalSessionID, 1),
 	}
 
-	session.Log = logs.NewLog(session.Request.LogID, Conf.Log.Path, Conf.Log.Mode)
+	session.Log = logs.NewLog(session.Request.LogID, config.Conf.Log.Path, config.Conf.Log.Mode)
 
 	return session, nil
 }
@@ -71,7 +71,7 @@ func (s *Session) Send(code int, obj interface{}) {
 
 	s.Conn.Write(jsons)
 	// 输入结束标志
-	s.Conn.Write([]byte(Conf.Main.EOF))
+	s.Conn.Write([]byte(config.Conf.Main.EOF))
 
 	log.Println("输出 json:", string(jsons))
 }

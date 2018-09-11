@@ -10,7 +10,7 @@ import (
 	"net"
 	"sync"
 	// 引入配置文件
-	. "user-server/config"
+	"user-server/config"
 )
 
 const (
@@ -122,7 +122,7 @@ func (serv *TCPServer) handleMessage(conn net.Conn) {
 // Listen 监听端口
 func (serv *TCPServer) Listen() error {
 	var err error
-	addr := fmt.Sprintf("%s:%d", Conf.Main.Host, Conf.Main.Port)
+	addr := fmt.Sprintf("%s:%d", config.Conf.Main.Host, config.Conf.Main.Port)
 	serv.listener, err = net.Listen("tcp", addr)
 	if err != nil {
 		return errors.Wrap(err, "TCP服务无法监听端口:"+Port)
