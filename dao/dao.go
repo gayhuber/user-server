@@ -1,3 +1,4 @@
+// Package dao  这里写 Dao 文件
 package dao
 
 import (

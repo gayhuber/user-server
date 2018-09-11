@@ -6,12 +6,14 @@ import (
 	"os"
 	"time"
 	"user-server/lib"
+	"user-server/models"
 )
 
 func server() error {
 	TCPServer := lib.NewTCPServer()
 	TCPServer.AddHandleFunc("demo/test", HandleJSON)
 	TCPServer.AddHandleFunc("activity/contact/index", HandleJSON)
+	TCPServer.AddHandleFunc("auth/user/register", models.AuthRegister)
 
 	// 开始监听
 	return TCPServer.Listen()
