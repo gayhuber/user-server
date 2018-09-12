@@ -33,10 +33,26 @@ func (u DaoUser) TableName() string {
 
 // SaveNewUser 新增一个用户
 func (u *DaoUser) SaveNewUser() (err error) {
-	err = db.Create(u).Error
+	tx := db.Begin()
+	err = tx.Create(u).Error
+	if err != nil {
+		tx.Rollback()
+		return
+	}
 
-	// u.Info = DaoUserInfo{
-	// 	Avatar: "http://img2.soyoung.com/user/1.png"
-	// }
+	u.Info = DaoUserInfo{
+		ID:       u.ID,
+		Avatar:   "http://img2.soyoung.com/user/1.png",
+		Nickname: "氧气 xxx",
+	}
+
+	err = tx.Create(u.Info).Error
+	if err != nil {
+		tx.Rollback()
+		return
+	}
+
+	tx.Commit()
+
 	return
 }
