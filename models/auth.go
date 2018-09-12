@@ -20,7 +20,7 @@ var handlerMap map[string]authHandler
 func transfer(tp string, params map[string]interface{}) (hd authHandler, err error) {
 	switch tp {
 	case "h5":
-		hd = &h5Auth{}
+		hd = &H5Auth{}
 	}
 
 	if hd == nil {

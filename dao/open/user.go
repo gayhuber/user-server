@@ -21,7 +21,22 @@ type DaoUser struct {
 	Info DaoUserInfo `gorm:"foreignkey:ID;AssociationForeignKey:ID"`
 }
 
+const (
+	USER_STATUS_ACTIVE  int = 20
+	USER_STATUS_PREPARE int = 10
+)
+
 // TableName 指定了这个 struct 依赖的表名
 func (u DaoUser) TableName() string {
 	return "tb_u_user"
+}
+
+// SaveNewUser 新增一个用户
+func (u *DaoUser) SaveNewUser() (err error) {
+	err = db.Create(u).Error
+
+	// u.Info = DaoUserInfo{
+	// 	Avatar: "http://img2.soyoung.com/user/1.png"
+	// }
+	return
 }
