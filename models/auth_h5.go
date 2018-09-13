@@ -39,8 +39,6 @@ func (auth *H5Auth) register() (code int, obj interface{}) {
 		}
 	}
 
-	fmt.Println(user)
-
 	return 200, lib.H{
 		"result": "this is h5 handler",
 		"src":    auth.Src,

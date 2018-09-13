@@ -57,27 +57,28 @@ func NewLog(id string) Logger {
 
 // Info 日值类型
 func (log *Logger) Info(msg interface{}, extra ...string) {
-	fmt.Println(msg)
-	strByte, _ := json.Marshal(msg)
+	data := logFormat(msg)
+
 	var category string
 	if len(extra) > 0 {
 		category = extra[0]
 	} else {
 		category = "Info"
 	}
-	logs.Info("[%s] [%s] %s", log.ID, category, string(strByte))
+	logs.Info("[%s] [%s] %s", log.ID, category, data)
 }
 
 // Error 日值类型
 func (log *Logger) Error(msg interface{}, extra ...string) {
-	strByte, _ := json.Marshal(msg)
+	data := logFormat(msg)
+
 	var category string
 	if len(extra) > 0 {
 		category = extra[0]
 	} else {
 		category = "Error"
 	}
-	logs.Error("[%s] [%s] %s", log.ID, category, string(strByte))
+	logs.Error("[%s] [%s] %s", log.ID, category, data)
 }
 
 // SetUniqueID 生成 uniqueID
@@ -147,4 +148,13 @@ func Notice(f interface{}, v ...interface{}) {
 	tmpl.Data = f
 	strByte, _ := json.Marshal(tmpl)
 	logs.Notice(string(strByte), v...)
+}
+
+func logFormat(f interface{}, v ...interface{}) string {
+	str, ok := f.(string)
+	if !ok {
+		strByte, _ := json.Marshal(f)
+		str = string(strByte)
+	}
+	return str
 }
