@@ -22,14 +22,11 @@ func transfer(tp string, params map[string]interface{}) (hd authHandler, err err
 	case "h5":
 		hd = &H5Auth{}
 	}
-
 	if hd == nil {
 		err = errors.New("not found handler")
 		return
 	}
-
 	hd.setParams(params)
-
 	return
 }
 
@@ -41,6 +38,7 @@ func AuthRegister(session *lib.Session) {
 	}
 	code, resp := hd.register()
 
+	session.Log.Info(resp, "RESPONSE")
 	session.Send(code, resp)
 
 	// session.Send(200, lib.H{
@@ -50,7 +48,3 @@ func AuthRegister(session *lib.Session) {
 	// 	"raw":     session.Request.Params,
 	// })
 }
-
-// func init() {
-// 	handlerMap["h5"] = &h5Auth{}
-// }

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/astaxie/beego/logs"
+	"user-server/config"
 )
 
 // log 的一些设置
@@ -23,10 +24,10 @@ type LogInfoTemplate struct {
 // UniqueID log 的唯一 id
 var uniqueID int64
 
-// log 的基础设置都在这里了
+// log 的通用设置
 func init() {
-	config := fmt.Sprintf(`{"filename":"%s"}`, LogPath)
-	logs.SetLogger(ConsoleType, config)
+	conf := fmt.Sprintf(`{"filename":"%s"}`, config.Conf.Log.Path)
+	logs.SetLogger(config.Conf.Log.Mode, conf)
 	// 开启文件行号显示
 	logs.EnableFuncCallDepth(true)
 	// 因为是自己封装的需要将包层级给标明,否则文件行号只会显示依赖包中的行号
@@ -47,29 +48,36 @@ type logConfig struct {
 }
 
 // NewLog 生成一个新的 log 对象
-func NewLog(id string, path string, mode string) Logger {
+func NewLog(id string) Logger {
 	logger := Logger{
 		ID: id,
 	}
-	config := fmt.Sprintf(`{"filename":"%s"}`, path)
-	logger.bl = logs.NewLogger()
-	logger.bl.SetLogger(mode, config)
-	// 开启文件行号显示
-	logger.bl.EnableFuncCallDepth(true)
-	// 因为是自己封装的需要将包层级给标明,否则文件行号只会显示依赖包中的行号
-	logger.bl.SetLogFuncCallDepth(4)
-	// 异步 chan 的大小为1k
-	logger.bl.Async(1e3)
 	return logger
 }
 
 // Info 日值类型
-func (log *Logger) Info(f interface{}, v ...interface{}) {
-	tmpl := GetLogTemplate()
-	tmpl.Data = f
-	strByte, _ := json.Marshal(tmpl)
+func (log *Logger) Info(msg interface{}, extra ...string) {
+	fmt.Println(msg)
+	strByte, _ := json.Marshal(msg)
+	var category string
+	if len(extra) > 0 {
+		category = extra[0]
+	} else {
+		category = "Info"
+	}
+	logs.Info("[%s] [%s] %s", log.ID, category, string(strByte))
+}
 
-	log.bl.Info(string(strByte), v...)
+// Error 日值类型
+func (log *Logger) Error(msg interface{}, extra ...string) {
+	strByte, _ := json.Marshal(msg)
+	var category string
+	if len(extra) > 0 {
+		category = extra[0]
+	} else {
+		category = "Error"
+	}
+	logs.Error("[%s] [%s] %s", log.ID, category, string(strByte))
 }
 
 // SetUniqueID 生成 uniqueID
@@ -91,35 +99,22 @@ func GetLogTemplate() LogInfoTemplate {
 
 // Debug 方法
 func Debug(f interface{}, v ...interface{}) {
-	tmpl := GetLogTemplate()
-	tmpl.Data = f
-	strByte, _ := json.Marshal(tmpl)
-	logs.Debug(string(strByte), v...)
+	logs.Debug(f, v...)
 }
 
 // Info 方法
 func Info(f interface{}, v ...interface{}) {
-	tmpl := GetLogTemplate()
-	tmpl.Data = f
-	strByte, _ := json.Marshal(tmpl)
-
-	logs.Info(string(strByte), v...)
+	logs.Info(f, v...)
 }
 
 // Warn 方法
 func Warn(f interface{}, v ...interface{}) {
-	tmpl := GetLogTemplate()
-	tmpl.Data = f
-	strByte, _ := json.Marshal(tmpl)
-	logs.Warn(string(strByte), v...)
+	logs.Warn(f, v...)
 }
 
 // Error 方法
 func Error(f interface{}, v ...interface{}) {
-	tmpl := GetLogTemplate()
-	tmpl.Data = f
-	strByte, _ := json.Marshal(tmpl)
-	logs.Error(string(strByte), v...)
+	logs.Error(f, v...)
 }
 
 // Emergency 方法

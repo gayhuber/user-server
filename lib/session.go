@@ -3,7 +3,7 @@ package lib
 import (
 	"bufio"
 	"encoding/json"
-	"fmt"
+	// "fmt"
 	"log"
 	"net"
 	"sync"
@@ -29,19 +29,15 @@ type Session struct {
 // NewSession 新建 session
 func NewSession(rw *bufio.ReadWriter, conn net.Conn) (*Session, error) {
 	by, err := rw.ReadBytes('\n')
-
 	if err != nil {
 		return nil, err
 	}
 
-	log.Println("获取请求:", string(by))
-
 	var params Params
 	err = json.Unmarshal(by, &params)
 	if err != nil {
-		log.Println("json 格式不正确, error:", err)
+		logs.Error("json 格式不正确, error: %s", err)
 	}
-	fmt.Println("收到 map 类参数: ", params)
 
 	session := &Session{
 		Conn: conn,
@@ -53,7 +49,8 @@ func NewSession(rw *bufio.ReadWriter, conn net.Conn) (*Session, error) {
 		id: atomic.AddUint64(&globalSessionID, 1),
 	}
 
-	session.Log = logs.NewLog(session.Request.LogID, config.Conf.Log.Path, config.Conf.Log.Mode)
+	session.Log = logs.NewLog(session.Request.LogID)
+	session.Log.Info(params, "GET_PARAMS")
 
 	return session, nil
 }
@@ -73,5 +70,6 @@ func (s *Session) Send(code int, obj interface{}) {
 	// 输入结束标志
 	s.Conn.Write([]byte(config.Conf.Main.EOF))
 
-	log.Println("输出 json:", string(jsons))
+	s.Log.Info(string(jsons), "RESPONSE")
+
 }

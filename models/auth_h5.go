@@ -17,12 +17,13 @@ func (auth *H5Auth) getName() string {
 	return "H5Auth"
 }
 
+// 注册一个新的用户
 func (auth *H5Auth) register() (code int, obj interface{}) {
 	openID, salt := tools.GenerageUniqueID(auth.Src)
 	user := open.DaoUser{
 		OpenID:       openID,
 		Src:          auth.Src,
-		Status:       open.USER_STATUS_ACTIVE,
+		Status:       open.USER_STATUS_PREPARE,
 		PasswordSalt: salt,
 		Token:        generateToken(openID, auth.Src, salt),
 	}

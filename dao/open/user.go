@@ -1,7 +1,9 @@
 package open
 
 import (
+	"fmt"
 	"time"
+	"user-server/tools"
 )
 
 // DaoUser db_open 库下的 User 表
@@ -22,8 +24,10 @@ type DaoUser struct {
 }
 
 const (
-	USER_STATUS_ACTIVE  int = 20
-	USER_STATUS_PREPARE int = 10
+	USER_STATUS_ACTIVE  int    = 20
+	USER_STATUS_PREPARE int    = 10
+	USER_DEAFUT_NAME    string = "氧气"
+	USER_DEAFUT_AVATAR  string = "http://img2.soyoung.com/user/%d.png"
 )
 
 // TableName 指定了这个 struct 依赖的表名
@@ -40,10 +44,13 @@ func (u *DaoUser) SaveNewUser() (err error) {
 		return
 	}
 
+	nickname := fmt.Sprintf("%s_%s_%s%d", USER_DEAFUT_NAME, u.Src, time.Now().Format("060102"), tools.RandInt(1000, 9999))
+	avatar := fmt.Sprintf(USER_DEAFUT_AVATAR, tools.RandInt(1, 5))
+
 	u.Info = DaoUserInfo{
 		ID:       u.ID,
-		Avatar:   "http://img2.soyoung.com/user/1.png",
-		Nickname: "氧气 xxx",
+		Avatar:   avatar,
+		Nickname: nickname,
 	}
 
 	err = tx.Create(u.Info).Error

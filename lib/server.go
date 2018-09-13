@@ -6,11 +6,12 @@ import (
 	"fmt"
 	"github.com/pkg/errors"
 	"io"
-	"log"
+	// "log"
 	"net"
 	"sync"
 	// 引入配置文件
 	"user-server/config"
+	logs "user-server/tools/loghandler"
 )
 
 const (
@@ -26,7 +27,7 @@ func Open(addr string) (*bufio.ReadWriter, error) {
 	// Dial the remote process.
 	// Note that the local port is chosen on the fly. If the local port
 	// must be a specific one, use DialTCP() instead.
-	log.Println("Dial " + addr)
+	logs.Debug("Dial " + addr)
 	conn, err := net.Dial("tcp", addr)
 	if err != nil {
 		return nil, errors.Wrap(err, "Dialing "+addr+" failed")
@@ -90,7 +91,7 @@ func (serv *TCPServer) handleMessage(conn net.Conn) {
 	// 错误处理
 	defer func() {
 		if err := recover(); err != nil {
-			log.Println("出了错：", err)
+			logs.Error("出现 painc:", err)
 		}
 	}()
 
@@ -98,10 +99,10 @@ func (serv *TCPServer) handleMessage(conn net.Conn) {
 		session, err := NewSession(rw, conn)
 		switch {
 		case err == io.EOF:
-			log.Println("读取完成.")
+			logs.Debug("读取完成.")
 			return
 		case err != nil:
-			log.Println("读取出错")
+			logs.Error("读取出错")
 			return
 		}
 
@@ -110,7 +111,7 @@ func (serv *TCPServer) handleMessage(conn net.Conn) {
 		handleFunc, ok := serv.handler[session.Request.Route]
 
 		if !ok {
-			log.Println("找不到对应路由规则: ", session.Request.Route)
+			logs.Error("找不到对应路由规则: ", session.Request.Route)
 			return
 		}
 
@@ -127,11 +128,11 @@ func (serv *TCPServer) Listen() error {
 	if err != nil {
 		return errors.Wrap(err, "TCP服务无法监听端口:"+Port)
 	}
-	log.Println(" 服务监听成功：", serv.listener.Addr().String())
+	logs.Info(" 服务监听成功：", serv.listener.Addr().String())
 	for {
 		conn, err := serv.listener.Accept()
 		if err != nil {
-			log.Println("新请求监听失败!")
+			logs.Error("新请求监听失败!")
 			continue
 		}
 		// 开始处理新链接数据
