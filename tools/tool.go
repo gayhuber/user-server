@@ -59,7 +59,6 @@ func RegisteSoyoungHalf(openID, platform, avatar, nickname string) (uid int, isT
 
 	respBody := respSoyoungHalf{}
 	json.Unmarshal(body, &respBody)
-	fmt.Println(respBody, string(body))
 
 	uid = respBody.ResponseData.User.ResponseData.UID
 	isTrue = true

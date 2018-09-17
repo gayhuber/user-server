@@ -100,22 +100,54 @@ func GetLogTemplate() LogInfoTemplate {
 
 // Debug 方法
 func Debug(f interface{}, v ...interface{}) {
-	logs.Debug(f, v...)
+	data := logFormat(f)
+	var category string
+	if len(v) > 0 {
+		category = v[0].(string)
+	} else {
+		category = "Debug"
+	}
+
+	logs.Info("[%s] %s", category, data)
 }
 
 // Info 方法
 func Info(f interface{}, v ...interface{}) {
-	logs.Info(f, v...)
+	data := logFormat(f)
+	var category string
+	if len(v) > 0 {
+		category = v[0].(string)
+	} else {
+		category = "Info"
+	}
+
+	logs.Info("[%s] %s", category, data)
 }
 
 // Warn 方法
 func Warn(f interface{}, v ...interface{}) {
-	logs.Warn(f, v...)
+	data := logFormat(f)
+	var category string
+	if len(v) > 0 {
+		category = v[0].(string)
+	} else {
+		category = "Warn"
+	}
+
+	logs.Info("[%s] %s", category, data)
 }
 
 // Error 方法
 func Error(f interface{}, v ...interface{}) {
-	logs.Error(f, v...)
+	data := logFormat(f)
+	var category string
+	if len(v) > 0 {
+		category = v[0].(string)
+	} else {
+		category = "Error"
+	}
+
+	logs.Info("[%s] %s", category, data)
 }
 
 // Emergency 方法

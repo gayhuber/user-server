@@ -40,11 +40,4 @@ func AuthRegister(session *lib.Session) {
 
 	session.Log.Info(resp, "RESPONSE")
 	session.Send(code, resp)
-
-	// session.Send(200, lib.H{
-	// 	"message": "this is from server",
-	// 	"param":   "auth register",
-	// 	"log_id":  session.Log.ID,
-	// 	"raw":     session.Request.Params,
-	// })
 }
