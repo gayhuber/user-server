@@ -63,3 +63,9 @@ func (u *DaoUser) SaveNewUser() (err error) {
 
 	return
 }
+
+// FlashSyUID 更新用户的新氧 ID
+func (u *DaoUser) FlashSyUID(SyUID int) (err error) {
+	err = db.Model(u).Updates(map[string]interface{}{"sy_uid": SyUID, "status": USER_STATUS_ACTIVE}).Error
+	return
+}

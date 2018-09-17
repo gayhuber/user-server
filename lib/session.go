@@ -3,7 +3,7 @@ package lib
 import (
 	"bufio"
 	"encoding/json"
-	// "fmt"
+	"fmt"
 	"log"
 	"net"
 	"sync"
@@ -28,6 +28,9 @@ type Session struct {
 
 // NewSession 新建 session
 func NewSession(rw *bufio.ReadWriter, conn net.Conn) (*Session, error) {
+	// 错误集中处理
+	defer paincHandler(conn)
+
 	by, err := rw.ReadBytes('\n')
 	if err != nil {
 		return nil, err
@@ -37,6 +40,7 @@ func NewSession(rw *bufio.ReadWriter, conn net.Conn) (*Session, error) {
 	err = json.Unmarshal(by, &params)
 	if err != nil {
 		logs.Error("json 格式不正确, error: %s", err)
+		panic(err.Error())
 	}
 
 	session := &Session{
@@ -57,9 +61,7 @@ func NewSession(rw *bufio.ReadWriter, conn net.Conn) (*Session, error) {
 
 // Send 目前是回复 json
 func (s *Session) Send(code int, obj interface{}) {
-	var resp Response
-	resp.Code = code
-	resp.Data = obj
+	resp := ResponseHandler(code, obj)
 
 	jsons, err := json.Marshal(resp)
 	if err != nil {
@@ -72,4 +74,15 @@ func (s *Session) Send(code int, obj interface{}) {
 
 	s.Log.Info(string(jsons), "RESPONSE")
 
+}
+
+func paincHandler(conn net.Conn) {
+	session := &Session{
+		Conn: conn,
+	}
+	if err := recover(); err != nil {
+		logs.Error(err)
+		str := fmt.Sprint(err)
+		session.Send(500, str)
+	}
 }

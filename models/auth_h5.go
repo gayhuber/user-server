@@ -1,7 +1,7 @@
 package models
 
 import (
-	"fmt"
+	"time"
 	"user-server/dao/open"
 	"user-server/lib"
 	"user-server/tools"
@@ -26,23 +26,40 @@ func (auth *H5Auth) register() (code int, obj interface{}) {
 		Status:       open.USER_STATUS_PREPARE,
 		PasswordSalt: salt,
 		Token:        generateToken(openID, auth.Src, salt),
+		CreateAt:     time.Now(),
 	}
 
 	err := user.SaveNewUser()
 
 	if err != nil {
-		return 400, lib.H{
-			"result": "no new user",
-			"src":    auth.Src,
-			"other":  auth.Ext,
-			"msg":    err,
+		return 500, lib.H{
+			"msg": "数据库插入失败",
 		}
 	}
 
+	syUID, isRegister := tools.RegisteSoyoungHalf(user.OpenID, user.Src, user.Info.Avatar, user.Info.Nickname)
+	if !isRegister {
+		return 500, lib.H{
+			"msg": "注册新氧半账号失败",
+		}
+	}
+
+	err = user.FlashSyUID(syUID)
+	if err != nil {
+		return 500, lib.H{
+			"msg": "数据库更新失败",
+		}
+	}
+
+	// 正常返回的内容
 	return 200, lib.H{
-		"result": "this is h5 handler",
-		"src":    auth.Src,
-		"other":  auth.Ext,
+		"open_id":       user.OpenID,
+		"src":           user.Src,
+		"status":        user.Status,
+		"password_salt": user.PasswordSalt,
+		"token":         user.Token,
+		"id":            user.ID,
+		"sy_uid":        user.SyUID,
 	}
 }
 

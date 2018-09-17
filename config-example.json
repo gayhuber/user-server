@@ -18,5 +18,8 @@
             "max_open_conn":"500",
             "max_idle_conn":"200"
         }
+    },
+    "params": {
+        "soyoung_register": "" 
     }
 }

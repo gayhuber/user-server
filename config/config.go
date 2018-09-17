@@ -10,9 +10,10 @@ import (
 
 // Config 整个服务的配置结构
 type Config struct {
-	Main mainConfig
-	Log  logConfig
-	DB   map[string]DBConfig `json:"db"`
+	Main   mainConfig
+	Log    logConfig
+	DB     map[string]DBConfig `json:"db"`
+	Params map[string]string   `json:"params"`
 }
 
 //DBConfig 数据库配置文件
