@@ -81,8 +81,9 @@ func paincHandler(conn net.Conn) {
 		Conn: conn,
 	}
 	if err := recover(); err != nil {
-		logs.Error(err)
-		str := fmt.Sprint(err)
+		str := H{
+			"msg": fmt.Sprint(err),
+		}
 		session.Send(500, str)
 	}
 }

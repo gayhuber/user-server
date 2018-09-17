@@ -57,14 +57,14 @@ func ResponseHandler(code int, obj interface{}) Response {
 	return resp
 }
 
-// TCPError 统一的错误处理
+// TCPError 统一的错误处理(待定)
 func TCPError(code int, extra ...interface{}) {
 	if len(extra) > 0 {
 
 	}
 }
 
-// ErrorFormat 错误格式
+// ErrorFormat 错误格式(待定)
 type ErrorFormat struct {
 	Code  int
 	Extra string

@@ -91,8 +91,9 @@ func (serv *TCPServer) handleMessage(conn net.Conn) {
 	// 错误处理
 	defer func() {
 		if err := recover(); err != nil {
-			logs.Error("出现 painc:", err)
+			fmt.Println("真的有错了", err)
 		}
+		return
 	}()
 
 	for {
