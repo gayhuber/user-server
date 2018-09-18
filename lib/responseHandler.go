@@ -1,6 +1,7 @@
 package lib
 
 import (
+	"fmt"
 	"sync"
 )
 
@@ -16,6 +17,7 @@ func init() {
 	statusmp = &statusMap{}
 
 	statusmp.Body = map[int]string{
+		500:  "程序错误",
 		200:  "成功",
 		1002: "参数错误",
 		1004: "禁止访问",
@@ -46,13 +48,20 @@ func ResponseHandler(code int, obj interface{}) Response {
 	resp.Data = obj
 
 	if code != 200 {
-		data := obj.(H)
-		msg, ok := data["msg"]
-		if ok {
-			resp.Data = msg.(string)
-		} else {
+		switch obj.(type) {
+		case H:
+			data := obj.(H)
+			msg, ok := data["msg"]
+			if ok {
+				resp.Data = msg.(string)
+			} else {
+				resp.Data = ""
+			}
+		default:
+			resp.Message = fmt.Sprint(obj)
 			resp.Data = ""
 		}
+
 	}
 	return resp
 }

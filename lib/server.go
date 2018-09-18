@@ -10,6 +10,7 @@ import (
 	"net"
 	"sync"
 	// 引入配置文件
+	"runtime/debug"
 	"user-server/config"
 	logs "user-server/tools/loghandler"
 )
@@ -91,7 +92,9 @@ func (serv *TCPServer) handleMessage(conn net.Conn) {
 	// 错误处理
 	defer func() {
 		if err := recover(); err != nil {
-			fmt.Println("真的有错了", err)
+			fmt.Println("真的出错了:", err)
+			debug.PrintStack()
+			logs.Error(debug.Stack())
 		}
 		return
 	}()

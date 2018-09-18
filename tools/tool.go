@@ -3,11 +3,13 @@ package tools
 import (
 	"crypto/md5"
 	"encoding/json"
+	// "errors"
 	"fmt"
 	"github.com/satori/go.uuid"
 	"io/ioutil"
 	"math/rand"
 	"net/http"
+	"reflect"
 	"strings"
 	"time"
 	"user-server/config"
@@ -101,6 +103,45 @@ func GetClient(url string, headers ...map[string]string) (resp *http.Response, e
 	client := &http.Client{}
 	resp, err = client.Do(req)
 	return
+}
+
+type H map[string]string
+
+func SelectType() {
+	// mp := map[string]string{
+	// 	"key1": "value1",
+	// }
+
+	// mp := errors.New("this is error")
+	mp := "asdfasdf"
+	var ttt interface{}
+	ttt = mp
+
+	x := reflect.TypeOf(mp).String()
+	fmt.Println("type:", x)
+
+	// 通过反射进行判断
+	switch reflect.TypeOf(mp).String() {
+	case "map[string]string":
+		fmt.Println("map 类型")
+	case "*errors.errorString":
+		fmt.Println("error 类型")
+	case "string":
+		fmt.Println("字符串类型")
+	}
+
+	// 通过
+	switch t := ttt.(type) {
+	case string:
+		fmt.Println("字符串")
+	case map[string]string:
+		fmt.Println("map 类型")
+	case error:
+		fmt.Println("error 类型")
+	default:
+		_ = t
+		fmt.Println("unknown")
+	}
 }
 
 // CheckErr 打印错误

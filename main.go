@@ -14,6 +14,7 @@ func server() error {
 	TCPServer.AddHandleFunc("demo/test", HandleJSON)
 	TCPServer.AddHandleFunc("activity/contact/index", HandleJSON)
 	TCPServer.AddHandleFunc("auth/user/register", models.AuthRegister)
+	TCPServer.AddHandleFunc("auth/user/login", models.AuthLogin)
 
 	// 开始监听
 	return TCPServer.Listen()

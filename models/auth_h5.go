@@ -11,6 +11,7 @@ type H5Auth struct {
 	Src      string
 	Ext      map[string]interface{}
 	uniqueID string
+	OpenID   string
 }
 
 func (auth *H5Auth) getName() string {
@@ -76,10 +77,13 @@ func (auth *H5Auth) home() (code int, obj interface{}) {
 }
 
 func (auth *H5Auth) setParams(params map[string]interface{}) {
-	auth.Src = params["src"].(string)
-	if auth.Src != "fanli" {
-		auth.Ext = params
+	if src, ok := params["src"]; ok {
+		auth.Src = src.(string)
 	}
+	if openID, ok := params["open_id"]; ok {
+		auth.OpenID = openID.(string)
+	}
+	auth.Ext = params
 
 	return
 }

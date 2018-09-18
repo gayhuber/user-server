@@ -20,3 +20,7 @@ func TestRegisteSoyoungHalf(t *testing.T) {
 	uid, isSuccess := RegisteSoyoungHalf("b5b86013b69e4ffd74d2bf12ebfea8e6", "hers", "http://img2.soyoung.com/user/3.png", "test")
 	t.Logf("uid: %d, isSuccess:%t", uid, isSuccess)
 }
+
+func TestSelectType(t *testing.T) {
+	SelectType()
+}

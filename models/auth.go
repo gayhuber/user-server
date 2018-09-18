@@ -41,3 +41,14 @@ func AuthRegister(session *lib.Session) {
 	session.Log.Info(resp, "RESPONSE")
 	session.Send(code, resp)
 }
+
+// AuthLogin 用户登录
+func AuthLogin(session *lib.Session) {
+	hd, err := transfer(session.Request.Params["type"].(string), session.Request.Params)
+	if err != nil {
+		session.Send(500, err)
+	}
+	code, resp := hd.login()
+	session.Log.Info(resp, "RESPONSE")
+	session.Send(code, resp)
+}
