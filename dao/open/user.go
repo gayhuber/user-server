@@ -69,3 +69,15 @@ func (u *DaoUser) FlashSyUID(SyUID int) (err error) {
 	err = db.Model(u).Updates(map[string]interface{}{"sy_uid": SyUID, "status": USER_STATUS_ACTIVE}).Error
 	return
 }
+
+// FindByOpenID 获取用户信息
+func (u *DaoUser) FindByOpenID(oID string) (err error) {
+	err = db.Where("open_id=?", oID).Select("id,open_id,sy_uid,src,password_salt").First(u).Error
+	if err != nil {
+		return
+	}
+
+	err = db.Model(u).Association("Info").Find(&u.Info).Error
+	fmt.Println(u)
+	return
+}

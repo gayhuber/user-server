@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"github.com/pkg/errors"
 	"io"
-	// "log"
+	"log"
 	"net"
 	"sync"
 	// 引入配置文件
@@ -92,7 +92,7 @@ func (serv *TCPServer) handleMessage(conn net.Conn) {
 	// 错误处理
 	defer func() {
 		if err := recover(); err != nil {
-			fmt.Println("真的出错了:", err)
+			log.Println("真的出错了:", err)
 			debug.PrintStack()
 			logs.Error(debug.Stack())
 		}

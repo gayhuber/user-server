@@ -64,16 +64,34 @@ func (auth *H5Auth) register() (code int, obj interface{}) {
 	}
 }
 
+// 根据 openID 为用户提供登录token
 func (auth *H5Auth) login() (code int, obj interface{}) {
-	return
+	user := &open.DaoUser{}
+	err := user.FindByOpenID(auth.OpenID)
+	if err != nil {
+		return 2002, err
+	}
+
+	token := generateToken(user.OpenID, user.Src, user.PasswordSalt)
+
+	return 200, lib.H{
+		"open_id": user.OpenID,
+		"sy_uid":  user.SyUID,
+		"src":     user.Src,
+		"info": lib.H{
+			"avatar":   user.Info.Avatar,
+			"nickname": user.Info.Nickname,
+		},
+		"token": token,
+	}
 }
 
 func (auth *H5Auth) info() (code int, obj interface{}) {
-	return
+	return 500, nil
 }
 
 func (auth *H5Auth) home() (code int, obj interface{}) {
-	return
+	return 500, nil
 }
 
 func (auth *H5Auth) setParams(params map[string]interface{}) {

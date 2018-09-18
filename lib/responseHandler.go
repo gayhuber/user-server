@@ -57,6 +57,8 @@ func ResponseHandler(code int, obj interface{}) Response {
 			} else {
 				resp.Data = ""
 			}
+		case nil:
+			resp.Data = ""
 		default:
 			resp.Message = fmt.Sprint(obj)
 			resp.Data = ""
