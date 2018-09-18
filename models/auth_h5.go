@@ -7,6 +7,7 @@ import (
 	"user-server/tools"
 )
 
+// H5Auth 针对半账号设定的数据集合
 type H5Auth struct {
 	Src      string
 	Ext      map[string]interface{}
