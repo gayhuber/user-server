@@ -10,6 +10,18 @@
 			"tree": true
 		},
 		{
+			"checksumSHA1": "w3QCCIYHgZzIXQ+xTl7oLfFrXHs=",
+			"path": "github.com/gomodule/redigo/internal",
+			"revision": "2cd21d9966bf7ff9ae091419744f0b3fb0fecace",
+			"revisionTime": "2018-06-27T14:45:07Z"
+		},
+		{
+			"checksumSHA1": "To/N5YA/FD0Rrs6r2OOmHXgxYwI=",
+			"path": "github.com/gomodule/redigo/redis",
+			"revision": "2cd21d9966bf7ff9ae091419744f0b3fb0fecace",
+			"revisionTime": "2018-06-27T14:45:07Z"
+		},
+		{
 			"checksumSHA1": "K2x9czFwwfYcB6GyZCqZmJsa7gE=",
 			"path": "github.com/jinzhu/gorm",
 			"revision": "32455088f24d6b1e9a502fb8e40fdc16139dbea8",
@@ -34,6 +46,54 @@
 			"revision": "8c34f848e18c4bd34d02db7f19a0ed1a0a8f5852",
 			"revisionTime": "2018-03-01T21:24:51Z",
 			"tree": true
+		},
+		{
+			"checksumSHA1": "+6zTw+ADPa2Hi8Qn2HanM07JcsE=",
+			"path": "user-server",
+			"revision": "3ebd870b9d1c1277c59ade9c4864bc10b4ad75f6",
+			"revisionTime": "2018-09-18T08:47:02Z"
+		},
+		{
+			"checksumSHA1": "PZPvpXmsilX5XF4GqCLAgvDUWSU=",
+			"path": "user-server/config",
+			"revision": "3ebd870b9d1c1277c59ade9c4864bc10b4ad75f6",
+			"revisionTime": "2018-09-18T08:47:02Z"
+		},
+		{
+			"checksumSHA1": "N12f5yKDNUrmVTp9ZMrGhYyZIvY=",
+			"path": "user-server/dao",
+			"revision": "3ebd870b9d1c1277c59ade9c4864bc10b4ad75f6",
+			"revisionTime": "2018-09-18T08:47:02Z"
+		},
+		{
+			"checksumSHA1": "NdmgWahTQlo3fnpKymXfFD4PHjc=",
+			"path": "user-server/dao/open",
+			"revision": "3ebd870b9d1c1277c59ade9c4864bc10b4ad75f6",
+			"revisionTime": "2018-09-18T08:47:02Z"
+		},
+		{
+			"checksumSHA1": "Oe7U7UrMgIn36pqqn4YHVkHraB4=",
+			"path": "user-server/lib",
+			"revision": "3ebd870b9d1c1277c59ade9c4864bc10b4ad75f6",
+			"revisionTime": "2018-09-18T08:47:02Z"
+		},
+		{
+			"checksumSHA1": "ezLsyyWNNbbXNWq5uVmiMDKh10c=",
+			"path": "user-server/models",
+			"revision": "3ebd870b9d1c1277c59ade9c4864bc10b4ad75f6",
+			"revisionTime": "2018-09-18T08:47:02Z"
+		},
+		{
+			"checksumSHA1": "coqPwd59rY1pDiZMo+INxO+WcNU=",
+			"path": "user-server/tools",
+			"revision": "3ebd870b9d1c1277c59ade9c4864bc10b4ad75f6",
+			"revisionTime": "2018-09-18T08:47:02Z"
+		},
+		{
+			"checksumSHA1": "SQWbJrgeRyy0sKQTvza9VGKb7wY=",
+			"path": "user-server/tools/loghandler",
+			"revision": "3ebd870b9d1c1277c59ade9c4864bc10b4ad75f6",
+			"revisionTime": "2018-09-18T08:47:02Z"
 		}
 	],
 	"rootPath": "user-server"

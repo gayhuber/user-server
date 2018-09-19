@@ -75,7 +75,7 @@ func (auth *H5Auth) login() (code int, obj interface{}) {
 
 	token := generateToken(user.OpenID, user.Src, user.PasswordSalt)
 
-	return 200, lib.H{
+	info := lib.H{
 		"open_id": user.OpenID,
 		"sy_uid":  user.SyUID,
 		"src":     user.Src,
@@ -85,6 +85,7 @@ func (auth *H5Auth) login() (code int, obj interface{}) {
 		},
 		"token": token,
 	}
+	return 200, info
 }
 
 func (auth *H5Auth) info() (code int, obj interface{}) {

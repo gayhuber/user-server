@@ -78,6 +78,17 @@ func (u *DaoUser) FindByOpenID(oID string) (err error) {
 	}
 
 	err = db.Model(u).Association("Info").Find(&u.Info).Error
-	fmt.Println(u)
+	return
+}
+
+// FindByToken 获取用户信息
+func (u *DaoUser) FindByToken(token string) (err error) {
+	err = db.Where("token=?", token).Select("id,open_id,sy_uid,src,password_salt").First(u).Error
+	if err != nil {
+		return
+	}
+
+	err = db.Model(u).Association("Info").Find(&u.Info).Error
+	fmt.Println("get info by token:", u)
 	return
 }

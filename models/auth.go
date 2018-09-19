@@ -18,6 +18,7 @@ type authHandler interface {
 var handlerMap map[string]authHandler
 
 func transfer(tp string, params map[string]interface{}) (hd authHandler, err error) {
+	// 根据 type 来加载不同的实体
 	switch tp {
 	case "h5":
 		hd = &H5Auth{}
@@ -49,6 +50,9 @@ func AuthLogin(session *lib.Session) {
 		session.Send(500, err)
 	}
 	code, resp := hd.login()
+
+	StoreSession(resp.(map[string]interface{}))
+
 	session.Log.Info(resp, "RESPONSE")
 	session.Send(code, resp)
 }

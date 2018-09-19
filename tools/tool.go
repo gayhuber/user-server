@@ -130,7 +130,7 @@ func SelectType() {
 		fmt.Println("字符串类型")
 	}
 
-	// 通过
+	// 另一种隐式的判断
 	switch t := ttt.(type) {
 	case string:
 		fmt.Println("字符串")

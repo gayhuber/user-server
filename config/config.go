@@ -14,6 +14,7 @@ type Config struct {
 	Log    logConfig
 	DB     map[string]DBConfig `json:"db"`
 	Params map[string]string   `json:"params"`
+	Redis  redisConfig         `json:"redis"`
 }
 
 //DBConfig 数据库配置文件
@@ -36,6 +37,15 @@ type mainConfig struct {
 type logConfig struct {
 	Path string `json:"path"`
 	Mode string `json:"mode"`
+}
+
+type redisConfig struct {
+	Host      string `json:"host"`
+	Database  string `json:"database"`
+	Auth      string `json:"auth"`
+	MaxActive int    `json:"max_active"`
+	MaxIdle   int    `json:"max_idle"`
+	Timeout   int    `json:"timeout"`
 }
 
 var (
