@@ -45,13 +45,16 @@ func AuthRegister(session *lib.Session) {
 
 // AuthLogin 用户登录
 func AuthLogin(session *lib.Session) {
-	hd, err := transfer(session.Request.Params["type"].(string), session.Request.Params)
+	reqType := session.Request.Params["type"].(string)
+	hd, err := transfer(reqType, session.Request.Params)
 	if err != nil {
 		session.Send(500, err)
 	}
 	code, resp := hd.login()
 
-	StoreSession(resp.(map[string]interface{}))
+	// 将用户登录信息存到缓存中一份
+	data := resp.(lib.H)
+	NewSession(data["token"].(string), reqType).store(data)
 
 	session.Log.Info(resp, "RESPONSE")
 	session.Send(code, resp)

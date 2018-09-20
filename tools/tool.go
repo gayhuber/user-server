@@ -152,3 +152,14 @@ func CheckErr(err error) bool {
 	}
 	return false
 }
+
+// JSONEncode 数据转字符串 (来自一个 phper 的倔强)
+func JSONEncode(data interface{}) ([]byte, error) {
+	return json.Marshal(data)
+}
+
+// JSONDecode 字符串转数据 (来自一个 phper 的倔强)
+func JSONDecode(data string, v interface{}) error {
+	by := []byte(data)
+	return json.Unmarshal(by, v)
+}
