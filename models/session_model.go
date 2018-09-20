@@ -8,8 +8,10 @@ import (
 )
 
 const (
-	SUBMIT_LIFE    int    = 864000
-	SESSION_PREFIX string = "session_"
+	// SUBMITLIFE 缓存周期
+	SUBMITLIFE int = 864000
+	// SESSIONPREFIX 缓存前缀
+	SESSIONPREFIX string = "session_"
 )
 
 // SessionModel 维护用户登录信息的模型
@@ -71,7 +73,7 @@ func (sess *SessionModel) store(info map[string]interface{}) {
 
 // getKey 组件缓存 key
 func (sess *SessionModel) getKey() string {
-	return SESSION_PREFIX + sess.Token
+	return SESSIONPREFIX + sess.Token
 }
 
 // StoreSession 存储 session 信息
@@ -79,7 +81,7 @@ func StoreSession(key string, info map[string]interface{}) {
 	redis := tools.GetRedis()
 	defer redis.Close()
 	infoByte, _ := tools.JSONEncode(info)
-	err := redis.Set(key, infoByte, SUBMIT_LIFE).Error
+	err := redis.Set(key, infoByte, SUBMITLIFE).Error
 	if err != nil {
 		logs.Error(err, "SESSION_MODEL_SAVE_ERROR")
 	}
