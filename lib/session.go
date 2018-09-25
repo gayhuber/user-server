@@ -61,6 +61,7 @@ func NewSession(rw *bufio.ReadWriter, conn net.Conn) (*Session, error) {
 
 // Send 目前是回复 json
 func (s *Session) Send(code int, obj interface{}) {
+	s.Log.Info(obj, "RESPONSE")
 	resp := ResponseHandler(code, obj)
 
 	jsons, err := json.Marshal(resp)

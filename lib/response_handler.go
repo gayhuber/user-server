@@ -18,8 +18,10 @@ func init() {
 	statusmp = &statusMap{}
 
 	statusmp.Body = map[int]string{
-		500:  "程序错误",
 		200:  "成功",
+		400:  "请求发生错误",
+		401:  "权限受限",
+		500:  "程序错误",
 		1002: "参数错误",
 		1004: "禁止访问",
 		1005: "该服务暂时不可用",
@@ -66,6 +68,7 @@ func ResponseHandler(code int, obj interface{}) Response {
 		}
 
 	} else {
+		// 需要把 []byte 数据转换成别的格式, 否则会 jsonEncode 之后会变成 base64编码的
 		switch obj.(type) {
 		case []byte:
 			tmp := H{}
@@ -73,6 +76,7 @@ func ResponseHandler(code int, obj interface{}) Response {
 			resp.Data = tmp
 		}
 	}
+
 	return resp
 }
 

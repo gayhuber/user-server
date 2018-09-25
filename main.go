@@ -15,6 +15,7 @@ func server() error {
 	TCPServer.AddHandleFunc("auth/user/info", models.AuthInfo)
 	TCPServer.AddHandleFunc("auth/user/register", models.AuthRegister)
 	TCPServer.AddHandleFunc("auth/user/login", models.AuthLogin)
+	TCPServer.AddHandleFunc("auth/user/sms", models.MobileSms)
 
 	// 开始监听
 	return TCPServer.Listen()

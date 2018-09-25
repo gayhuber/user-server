@@ -23,6 +23,8 @@ func transfer(tp string, params map[string]interface{}) (hd authHandler, err err
 	switch tp {
 	case "h5":
 		hd = &H5Auth{}
+	case "mobile":
+		hd = &MobileAuth{}
 	}
 	if hd == nil {
 		err = errors.New("not found handler")
@@ -61,6 +63,7 @@ func AuthLogin(session *lib.Session) {
 	session.Send(code, resp)
 }
 
+// AuthInfo 获取用户信息
 func AuthInfo(session *lib.Session) {
 	reqType := session.Request.Params["type"].(string)
 	hd, err := transfer(reqType, session.Request.Params)
