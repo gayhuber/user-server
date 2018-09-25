@@ -20,7 +20,8 @@
         }
     },
     "params": {
-        "soyoung_register": "" 
+        "soyoung_register": "" ,
+        "rpc_base_host": ""
     },
     "redis":{
         "host":"127.0.0.1:6379",

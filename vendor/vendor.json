@@ -22,6 +22,12 @@
 			"revisionTime": "2018-06-27T14:45:07Z"
 		},
 		{
+			"checksumSHA1": "qPDxEQZcfyAVI2XfSl3jNqdq418=",
+			"path": "github.com/hprose/hprose-golang/rpc",
+			"revision": "6c2a3b7138ea2c7dc4a8907d644f9f134e0fae74",
+			"revisionTime": "2018-05-17T15:21:16Z"
+		},
+		{
 			"checksumSHA1": "K2x9czFwwfYcB6GyZCqZmJsa7gE=",
 			"path": "github.com/jinzhu/gorm",
 			"revision": "32455088f24d6b1e9a502fb8e40fdc16139dbea8",
