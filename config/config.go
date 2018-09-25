@@ -112,3 +112,9 @@ func InitConfig() (err error) {
 	}
 	return nil
 }
+
+// GetParam 获取自定义参数
+func GetParam(key string) (string, bool) {
+	res, ok := Conf.Params[key]
+	return res, ok
+}
