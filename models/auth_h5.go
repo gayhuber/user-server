@@ -11,6 +11,7 @@ import (
 type H5Auth struct {
 	Src      string
 	Ext      map[string]interface{}
+	Token    string
 	uniqueID string
 	OpenID   string
 }
@@ -89,7 +90,12 @@ func (auth *H5Auth) login() (code int, obj interface{}) {
 }
 
 func (auth *H5Auth) info() (code int, obj interface{}) {
-	return 500, nil
+
+	resp, err := NewSession(auth.Token, "h5").info()
+	if err != nil {
+		return 400, err
+	}
+	return 200, resp
 }
 
 func (auth *H5Auth) home() (code int, obj interface{}) {
@@ -102,6 +108,9 @@ func (auth *H5Auth) setParams(params map[string]interface{}) {
 	}
 	if openID, ok := params["open_id"]; ok {
 		auth.OpenID = openID.(string)
+	}
+	if token, ok := params["token"]; ok {
+		auth.Token = token.(string)
 	}
 	auth.Ext = params
 

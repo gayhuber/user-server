@@ -1,6 +1,7 @@
 package lib
 
 import (
+	"encoding/json"
 	"fmt"
 	"sync"
 )
@@ -64,6 +65,13 @@ func ResponseHandler(code int, obj interface{}) Response {
 			resp.Data = ""
 		}
 
+	} else {
+		switch obj.(type) {
+		case []byte:
+			tmp := H{}
+			json.Unmarshal(obj.([]byte), &tmp)
+			resp.Data = tmp
+		}
 	}
 	return resp
 }

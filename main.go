@@ -12,7 +12,7 @@ import (
 func server() error {
 	TCPServer := lib.NewTCPServer()
 	TCPServer.AddHandleFunc("demo/test", HandleJSON)
-	TCPServer.AddHandleFunc("activity/contact/index", HandleJSON)
+	TCPServer.AddHandleFunc("auth/user/info", models.AuthInfo)
 	TCPServer.AddHandleFunc("auth/user/register", models.AuthRegister)
 	TCPServer.AddHandleFunc("auth/user/login", models.AuthLogin)
 
