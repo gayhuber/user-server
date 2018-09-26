@@ -53,7 +53,7 @@ func (auth *MobileAuth) setParams(params map[string]interface{}) {
 // sms 调用 base 的发送短信接口
 func (auth *MobileAuth) sms() (code int, obj interface{}) {
 
-	fmt.Println(auth)
+	fmt.Println("sms:", auth)
 	// 8 代表着快速登录
 	err := SendMobileSmsCode(auth.Mobile, auth.CountryCode, auth.IP, "8")
 

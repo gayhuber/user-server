@@ -103,10 +103,10 @@ func (serv *TCPServer) handleMessage(conn net.Conn) {
 		session, err := NewSession(rw, conn)
 		switch {
 		case err == io.EOF:
-			logs.Debug("读取完成.")
+			// logs.Debug("读取完成.")
 			return
 		case err != nil:
-			logs.Error("读取出错")
+			logs.Error("读取出错", err)
 			return
 		}
 
