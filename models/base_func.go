@@ -1,7 +1,6 @@
 package models
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"user-server/tools/hprose"
@@ -133,11 +132,12 @@ func QuickMobileLogin(mobile, smsCode, countryCode string, sys int) (responseDat
 	return tmp["responseData"], nil
 }
 
-func GetSimpleUserInfoById(uid int, returnUidAsKey bool, arrField []string) (info map[string]string, err error) {
+// GetSimpleUserInfoByID 获取用户信息
+func GetSimpleUserInfoByID(uid int, returnUIDAsKey bool, arrField []string) (info map[string]string, err error) {
 
 	arg := args{
 		"uid":            uid,
-		"returnUidAsKey": returnUidAsKey,
+		"returnUidAsKey": returnUIDAsKey,
 		"arrField":       arrField,
 	}
 
@@ -149,11 +149,6 @@ func GetSimpleUserInfoById(uid int, returnUidAsKey bool, arrField []string) (inf
 	}
 
 	tmp := respHandler(res)
-
-	if tmp["errorCode"] != "0" {
-		err = errors.New(tmp["errorMsg"])
-		return
-	}
-	err = json.Unmarshal([]byte(tmp["responseData"]), &info)
-	return
+	fmt.Println("this is tmp:", tmp)
+	return tmp, nil
 }

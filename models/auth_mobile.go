@@ -21,8 +21,14 @@ func (auth *MobileAuth) getName() string {
 }
 
 func (auth *MobileAuth) register() (code int, obj interface{}) {
+	resp, err := QuickMobileLogin(auth.Mobile, auth.Code, auth.CountryCode, auth.Sys)
+	if err != nil {
+		return 400, err
+	}
+
 	return 200, lib.H{
-		"result": "mobile register",
+		"exec":   "mobile register",
+		"result": resp,
 	}
 }
 
@@ -39,11 +45,23 @@ func (auth *MobileAuth) setParams(params map[string]interface{}) {
 	if mobile, ok := params["mobile"]; ok {
 		auth.Mobile = mobile.(string)
 	}
+
 	if countryCode, ok := params["country_code"]; ok {
 		auth.CountryCode = countryCode.(string)
 	}
+
 	if IP, ok := params["ip"]; ok {
 		auth.IP = IP.(string)
+	}
+
+	// 平台编号
+	if sys, ok := params["sys"]; ok {
+		auth.Sys = int(sys.(float64))
+	}
+
+	// 短信验证码
+	if code, ok := params["code"]; ok {
+		auth.Code = code.(string)
 	}
 	auth.Ext = params
 
