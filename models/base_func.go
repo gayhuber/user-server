@@ -61,9 +61,9 @@ func SendMobileSmsCode(mobile, countryCode, ip, Type string) error {
 		"countryCode": countryCode,
 		"type":        Type,
 		"key":         openKey,
-		"autoPasswd":  "",
-		"catpcha":     "",
-		"ip":          ip,
+		// "autoPasswd":  "",
+		// "catpcha":     "",
+		"ip": ip,
 	}
 
 	res, err := hprose.RemoteFunc("sendMobileSmsCode", arg)
@@ -72,13 +72,6 @@ func SendMobileSmsCode(mobile, countryCode, ip, Type string) error {
 		return err
 	}
 
-	// 这个变相转换一下输出, 用 json.Unmarshal 会出现map格式转换问题
-	// tmp := map[string]string{}
-	// for k, v := range res.(map[interface{}]interface{}) {
-	// 	key := fmt.Sprintf("%v", k)
-	// 	value := fmt.Sprintf("%v", v)
-	// 	tmp[key] = value
-	// }
 	tmp := respHandler(res)
 
 	if tmp["errorCode"] != "0" {
@@ -112,8 +105,8 @@ func QuickMobileLogin(mobile, smsCode, countryCode string, sys int) (responseDat
 		"extInfo": args{
 			"sys": sys,
 		},
-		"lver":    "",
-		"version": "",
+		// "lver":    "",
+		// "version": "",
 	}
 
 	res, err := hprose.RemoteFunc("quickMobileLogin", arg)
@@ -149,6 +142,5 @@ func GetSimpleUserInfoByID(uid int, returnUIDAsKey bool, arrField []string) (inf
 	}
 
 	tmp := respHandler(res)
-	fmt.Println("this is tmp:", tmp)
 	return tmp, nil
 }

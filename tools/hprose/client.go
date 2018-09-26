@@ -14,7 +14,7 @@ var (
 	// ADDRESS 服务地址
 	ADDRESS = "tcp://127.0.0.1:2333"
 	// TIMEOUT 超时设定
-	TIMEOUT time.Duration = 10 * time.Second
+	TIMEOUT time.Duration = 7 * time.Second
 
 	// ServiceMp 可用的函数组
 	ServiceMp *ServiceMap
@@ -47,9 +47,6 @@ func init() {
 
 	ServiceMp = &ServiceMap{}
 	ServiceMp.handlers = make(map[string]BaseClient)
-
-	log.Println("get method:", ServiceMp.handlers)
-
 }
 
 // AddMethod 添加方法
