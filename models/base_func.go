@@ -1,7 +1,6 @@
 package models
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"user-server/tools/hprose"
@@ -56,17 +55,21 @@ func SendMobileSmsCode(mobile, countryCode, ip, Type string) error {
 	}
 
 	res, err := hprose.RemoteFunc("sendMobileSmsCode", arg)
-	fmt.Println("sendMobileSmsCode:", res)
 
-	resp := baseResp{}
-	json.Unmarshal(res.([]byte), &resp)
+	// 这个变相转换一下输出, 用 json.Unmarshal 会出现map格式转换问题
+	tmp := map[string]string{}
+	for k, v := range res.(map[interface{}]interface{}) {
+		key := fmt.Sprintf("%v", k)
+		value := fmt.Sprintf("%v", v)
+		tmp[key] = value
+	}
 
 	if err != nil {
 		return err
 	}
 
-	if resp.ErrorCode != 0 {
-		return errors.New(resp.ErrorMsg)
+	if tmp["errorCode"] != "0" {
+		return errors.New(tmp["errorMsg"])
 	}
 	return nil
 }

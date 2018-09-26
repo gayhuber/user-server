@@ -108,7 +108,7 @@ func Debug(f interface{}, v ...interface{}) {
 		category = "Debug"
 	}
 
-	logs.Info("[%s] %s", category, data)
+	logs.Debug("[%s] %s", category, data)
 }
 
 // Info 方法
@@ -134,7 +134,7 @@ func Warn(f interface{}, v ...interface{}) {
 		category = "Warn"
 	}
 
-	logs.Info("[%s] %s", category, data)
+	logs.Warn("[%s] %s", category, data)
 }
 
 // Error 方法
@@ -147,7 +147,7 @@ func Error(f interface{}, v ...interface{}) {
 		category = "Error"
 	}
 
-	logs.Info("[%s] %s", category, data)
+	logs.Error("[%s] %s", category, data)
 }
 
 // Emergency 方法

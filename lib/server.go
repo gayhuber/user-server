@@ -94,7 +94,7 @@ func (serv *TCPServer) handleMessage(conn net.Conn) {
 		if err := recover(); err != nil {
 			log.Println("真的出错了:", err)
 			debug.PrintStack()
-			logs.Error(debug.Stack())
+			logs.Error(string(debug.Stack()))
 		}
 		return
 	}()
