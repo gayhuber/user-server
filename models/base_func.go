@@ -3,6 +3,7 @@ package models
 import (
 	"errors"
 	"fmt"
+	"log"
 	"user-server/tools/hprose"
 )
 
@@ -75,17 +76,44 @@ func SendMobileSmsCode(mobile, countryCode, ip, Type string) error {
 	tmp := respHandler(res)
 
 	if tmp["errorCode"] != "0" {
-		return errors.New(tmp["errorMsg"])
+		return errors.New(tmp["errorMsg"].(string))
 	}
 	return nil
 }
 
-func respHandler(res interface{}) map[string]string {
-	tmp := map[string]string{}
-	for k, v := range res.(map[interface{}]interface{}) {
-		key := fmt.Sprintf("%v", k)
-		value := fmt.Sprintf("%v", v)
-		tmp[key] = value
+func respHandler(res interface{}) (tmp map[string]interface{}) {
+	// map 需要初始化一个出来
+	tmp = make(map[string]interface{})
+	log.Println("input res is : ", res)
+	switch res.(type) {
+	case nil:
+		return tmp
+	case map[string]interface{}:
+		return res.(map[string]interface{})
+	case map[interface{}]interface{}:
+		log.Println("map[interface{}]interface{} res:", res)
+		for k, v := range res.(map[interface{}]interface{}) {
+			log.Println("loop:", k, v)
+			switch k.(type) {
+			case string:
+				switch v.(type) {
+				case map[interface{}]interface{}:
+					log.Println("map[interface{}]interface{} v:", v)
+					tmp[k.(string)] = respHandler(v)
+					continue
+				default:
+					log.Printf("default v: %v %v \n", k, v)
+					tmp[k.(string)] = v
+				}
+
+			default:
+				continue
+			}
+		}
+		return tmp
+	default:
+		// 暂时没遇到更复杂的数据
+		log.Println("unknow data:", res)
 	}
 	return tmp
 }
@@ -119,14 +147,14 @@ func QuickMobileLogin(mobile, smsCode, countryCode string, sys int) (responseDat
 	tmp := respHandler(res)
 
 	if tmp["errorCode"] != "0" {
-		err = errors.New(tmp["errorMsg"])
+		err = errors.New(tmp["errorMsg"].(string))
 		return
 	}
-	return tmp["responseData"], nil
+	return tmp["responseData"].(string), nil
 }
 
 // GetSimpleUserInfoByID 获取用户信息
-func GetSimpleUserInfoByID(uid int, returnUIDAsKey bool, arrField []string) (info map[string]string, err error) {
+func GetSimpleUserInfoByID(uid int, returnUIDAsKey bool, arrField []string) (info map[string]interface{}, err error) {
 
 	arg := args{
 		"uid":            uid,

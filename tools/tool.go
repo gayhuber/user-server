@@ -163,3 +163,12 @@ func JSONDecode(data string, v interface{}) error {
 	by := []byte(data)
 	return json.Unmarshal(by, v)
 }
+
+// Map2Struct 利用 json 包进行格式转换(效率低, 之后会换成 github.com/mitchellh/mapstructure 这个包)
+func Map2Struct(mp map[string]interface{}, v interface{}) error {
+	by, err := json.Marshal(mp)
+	if err != nil {
+		return nil
+	}
+	return json.Unmarshal(by, v)
+}
