@@ -4,10 +4,18 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"user-server/tools"
 	"user-server/tools/hprose"
 )
 
 type args map[string]interface{}
+
+// RespBody 调用 base 方法时返回的结构
+type RespBody struct {
+	ErrorCode    int                    `json:"errorCode"`
+	ErrorMsg     string                 `json:"errorMsg"`
+	ResponseData map[string]interface{} `json:"responseData"`
+}
 
 func init() {
 	// 注册方法
@@ -84,29 +92,33 @@ func SendMobileSmsCode(mobile, countryCode, ip, Type string) error {
 func respHandler(res interface{}) (tmp map[string]interface{}) {
 	// map 需要初始化一个出来
 	tmp = make(map[string]interface{})
-	log.Println("input res is : ", res)
+	// log.Println("input res is : ", res)
 	switch res.(type) {
 	case nil:
+		// log.Printf("nil res: %v", res)
 		return tmp
 	case map[string]interface{}:
+		// log.Printf("map[string]interface{} res: %v", res)
 		return res.(map[string]interface{})
 	case map[interface{}]interface{}:
-		log.Println("map[interface{}]interface{} res:", res)
+		// log.Println("map[interface{}]interface{} res:", res)
 		for k, v := range res.(map[interface{}]interface{}) {
-			log.Println("loop:", k, v)
+			// log.Printf("loop: : %v, v: %v \n", k, v)
 			switch k.(type) {
 			case string:
 				switch v.(type) {
 				case map[interface{}]interface{}:
-					log.Println("map[interface{}]interface{} v:", v)
+					// log.Println("map[interface{}]interface{} v:", v)
 					tmp[k.(string)] = respHandler(v)
 					continue
 				default:
-					log.Printf("default v: %v %v \n", k, v)
+					// log.Printf("default value k: %v , v: %v \n", k, v)
 					tmp[k.(string)] = v
+					continue
 				}
 
 			default:
+				// log.Printf("default key k: %v , v: %v \n", k, v)
 				continue
 			}
 		}
@@ -119,7 +131,15 @@ func respHandler(res interface{}) (tmp map[string]interface{}) {
 }
 
 // QuickMobileLogin 手机验证码快速注册/登录
-func QuickMobileLogin(mobile, smsCode, countryCode string, sys int) (responseData string, err error) {
+func QuickMobileLogin(mobile, smsCode, countryCode string, sys int) (responseData map[string]interface{}, err error) {
+	return map[string]interface{}{
+		"uid":          20532060,
+		"nickname":     "氧气wsc7a",
+		"avatar":       "http://img2.soyoung.com/user/5_100_100.png",
+		"login_mobile": "18333636949",
+		"new_user":     0,
+	}, nil
+
 	openKey, err := GetXyOpenKey(mobile)
 	if err != nil {
 		return
@@ -133,8 +153,6 @@ func QuickMobileLogin(mobile, smsCode, countryCode string, sys int) (responseDat
 		"extInfo": args{
 			"sys": sys,
 		},
-		// "lver":    "",
-		// "version": "",
 	}
 
 	res, err := hprose.RemoteFunc("quickMobileLogin", arg)
@@ -145,12 +163,15 @@ func QuickMobileLogin(mobile, smsCode, countryCode string, sys int) (responseDat
 	}
 
 	tmp := respHandler(res)
+	resp := RespBody{}
+	err = tools.Map2Struct(tmp, &resp)
 
-	if tmp["errorCode"] != "0" {
-		err = errors.New(tmp["errorMsg"].(string))
-		return
+	// 每个接口对成功返回的定义还不一样....
+	if resp.ErrorCode == 200 {
+		return resp.ResponseData, nil
 	}
-	return tmp["responseData"].(string), nil
+	err = errors.New(resp.ErrorMsg)
+	return
 }
 
 // GetSimpleUserInfoByID 获取用户信息

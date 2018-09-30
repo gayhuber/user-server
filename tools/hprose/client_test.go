@@ -10,6 +10,12 @@ import (
 
 type args map[string]interface{}
 
+type RespBody struct {
+	ErrorCode    int                    `json:"errorCode"`
+	ErrorMsg     string                 `json:"errorMsg"`
+	ResponseData map[string]interface{} `json:"responseData"`
+}
+
 func respHandler(res interface{}) (tmp map[string]interface{}) {
 	// map 需要初始化一个出来
 	tmp = make(map[string]interface{})
@@ -206,12 +212,6 @@ func GetSimpleUserInfoByID(uid int, returnUIDAsKey bool, arrField []string) (inf
 	return tmp, nil
 }
 
-type RespBody struct {
-	ErrorCode    int                    `json:"errorCode"`
-	ErrorMsg     string                 `json:"errorMsg"`
-	ResponseData map[string]interface{} `json:"responseData"`
-}
-
 // QuickMobileLogin 手机验证码快速注册/登录
 func QuickMobileLogin(mobile, smsCode, countryCode string, sys int) (responseData map[string]interface{}, err error) {
 	openKey, err := GetXyOpenKey(mobile)
@@ -243,7 +243,6 @@ func QuickMobileLogin(mobile, smsCode, countryCode string, sys int) (responseDat
 	// 每个接口对成功返回的定义还不一样....
 	if resp.ErrorCode == 200 {
 		return resp.ResponseData, nil
-
 	}
 	err = errors.New(resp.ErrorMsg)
 	return

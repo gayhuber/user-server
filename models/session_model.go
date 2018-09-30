@@ -77,7 +77,7 @@ func (sess *SessionModel) getKey() string {
 }
 
 // StoreSession 存储 session 信息
-func StoreSession(key string, info map[string]interface{}) {
+func StoreSession(key string, info map[string]interface{}, ttl ...int) {
 	redis := tools.GetRedis()
 	defer redis.Close()
 	infoByte, _ := tools.JSONEncode(info)

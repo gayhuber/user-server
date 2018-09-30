@@ -55,10 +55,6 @@ func AuthLogin(session *lib.Session) {
 	}
 	code, resp := hd.login()
 
-	// 将用户登录信息存到缓存中一份
-	data := resp.(lib.H)
-	NewSession(data["token"].(string), reqType).store(data)
-
 	session.Log.Info(resp, "RESPONSE")
 	session.Send(code, resp)
 }

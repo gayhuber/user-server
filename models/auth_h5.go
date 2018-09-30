@@ -86,6 +86,10 @@ func (auth *H5Auth) login() (code int, obj interface{}) {
 		},
 		"token": token,
 	}
+
+	// 将用户登录信息存到缓存中一份
+	NewSession(token, "h5").store(info)
+
 	return 200, info
 }
 

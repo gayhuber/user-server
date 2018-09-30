@@ -2,8 +2,13 @@ package models
 
 import (
 	"fmt"
+	"time"
 	"user-server/lib"
+	"user-server/tools"
 )
+
+// USERKEY 加密通用 salt
+const USERKEY = "ncisnotnaocan!@#2018"
 
 // MobileAuth 来自 mobile 渠道的参数格式
 type MobileAuth struct {
@@ -21,14 +26,27 @@ func (auth *MobileAuth) getName() string {
 }
 
 func (auth *MobileAuth) register() (code int, obj interface{}) {
-	resp, err := QuickMobileLogin(auth.Mobile, auth.Code, auth.CountryCode, auth.Sys)
+	resp, err := QuickMobileLogin(auth.Mobile, auth.Code, auth.CountryCode, 11)
 	if err != nil {
 		return 400, err
 	}
 
+	uid := resp["uid"].(int)
+	token := auth.generateToken(uid)
+	secKey := auth.generateSecKey(uid)
+
+	ttl := 864000
+
+	resp["token"] = token
+	resp["sec_key"] = secKey
+
+	// 将用户登录信息存到缓存中一份
+	NewSession(token, "mobile").store(resp)
+
 	return 200, lib.H{
-		"exec":   "mobile register",
-		"result": resp,
+		"sec_key":  secKey,
+		"token":    token,
+		"lifetime": ttl,
 	}
 }
 
@@ -41,6 +59,15 @@ func (auth *MobileAuth) info() (code int, obj interface{}) {
 func (auth *MobileAuth) home() (code int, obj interface{}) {
 	return 401, nil
 }
+func (auth *MobileAuth) generateToken(uid int) string {
+	tmp := fmt.Sprintf("%d%s%s", uid, USERKEY, time.Now().String())
+	return tools.MD5String([]byte(tmp))
+}
+func (auth *MobileAuth) generateSecKey(uid int) string {
+	tmp := fmt.Sprintf("%d%s%s", uid, USERKEY, time.Now().String())
+	return tools.MD5String([]byte(tmp))
+}
+
 func (auth *MobileAuth) setParams(params map[string]interface{}) {
 	if mobile, ok := params["mobile"]; ok {
 		auth.Mobile = mobile.(string)
