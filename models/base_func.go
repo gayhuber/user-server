@@ -132,13 +132,13 @@ func respHandler(res interface{}) (tmp map[string]interface{}) {
 
 // QuickMobileLogin 手机验证码快速注册/登录
 func QuickMobileLogin(mobile, smsCode, countryCode string, sys int) (responseData map[string]interface{}, err error) {
-	return map[string]interface{}{
-		"uid":          20532060,
-		"nickname":     "氧气wsc7a",
-		"avatar":       "http://img2.soyoung.com/user/5_100_100.png",
-		"login_mobile": "18333636949",
-		"new_user":     0,
-	}, nil
+	// return map[string]interface{}{
+	// 	"uid":          20532060,
+	// 	"nickname":     "氧气wsc7a",
+	// 	"avatar":       "http://img2.soyoung.com/user/5_100_100.png",
+	// 	"login_mobile": "18333636949",
+	// 	"new_user":     0,
+	// }, nil
 
 	openKey, err := GetXyOpenKey(mobile)
 	if err != nil {

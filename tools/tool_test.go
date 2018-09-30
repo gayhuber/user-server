@@ -24,3 +24,8 @@ func TestRegisteSoyoungHalf(t *testing.T) {
 func TestSelectType(t *testing.T) {
 	SelectType()
 }
+
+func TestCalculateTTL(t *testing.T) {
+	ttl := CalculateTTL()
+	t.Log("ttl:", ttl)
+}

@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"strconv"
 	"time"
 	"user-server/lib"
 	"user-server/tools"
@@ -19,6 +20,7 @@ type MobileAuth struct {
 	Sys         int
 	Ext         map[string]interface{}
 	IP          string
+	Token       string
 }
 
 func (auth *MobileAuth) getName() string {
@@ -31,11 +33,9 @@ func (auth *MobileAuth) register() (code int, obj interface{}) {
 		return 400, err
 	}
 
-	uid := resp["uid"].(int)
+	uid, _ := strconv.Atoi(resp["uid"].(string))
 	token := auth.generateToken(uid)
 	secKey := auth.generateSecKey(uid)
-
-	ttl := 864000
 
 	resp["token"] = token
 	resp["sec_key"] = secKey
@@ -46,7 +46,7 @@ func (auth *MobileAuth) register() (code int, obj interface{}) {
 	return 200, lib.H{
 		"sec_key":  secKey,
 		"token":    token,
-		"lifetime": ttl,
+		"lifetime": tools.CalculateTTL(),
 	}
 }
 
@@ -54,10 +54,18 @@ func (auth *MobileAuth) login() (code int, obj interface{}) {
 	return 401, nil
 }
 func (auth *MobileAuth) info() (code int, obj interface{}) {
-	return 401, nil
+	resp, err := NewSession(auth.Token, "mobile").info()
+	if err != nil {
+		return 400, err
+	}
+	return 200, resp
 }
 func (auth *MobileAuth) home() (code int, obj interface{}) {
-	return 401, nil
+	resp, err := NewSession(auth.Token, "mobile").info()
+	if err != nil {
+		return 400, err
+	}
+	return 200, resp
 }
 func (auth *MobileAuth) generateToken(uid int) string {
 	tmp := fmt.Sprintf("%d%s%s", uid, USERKEY, time.Now().String())
@@ -79,6 +87,10 @@ func (auth *MobileAuth) setParams(params map[string]interface{}) {
 
 	if IP, ok := params["ip"]; ok {
 		auth.IP = IP.(string)
+	}
+
+	if Token, ok := params["token"]; ok {
+		auth.Token = Token.(string)
 	}
 
 	// 平台编号
@@ -116,5 +128,13 @@ func MobileSms(session *lib.Session) {
 	auth := MobileAuth{}
 	auth.setParams(session.Request.Params)
 	code, resp := auth.sms()
+	session.Send(code, resp)
+}
+
+// Home 首页信息
+func MobileHome(session *lib.Session) {
+	auth := MobileAuth{}
+	auth.setParams(session.Request.Params)
+	code, resp := auth.home()
 	session.Send(code, resp)
 }

@@ -68,6 +68,9 @@ func (sess *SessionModel) info() (res []byte, err error) {
 // strore 将用户信息存入缓存
 func (sess *SessionModel) store(info map[string]interface{}) {
 	sess.SessionInfo = info
+	if sess.Type == "mobile" {
+		StoreSession(sess.getKey(), info, tools.CalculateTTL())
+	}
 	StoreSession(sess.getKey(), info)
 }
 
@@ -81,7 +84,15 @@ func StoreSession(key string, info map[string]interface{}, ttl ...int) {
 	redis := tools.GetRedis()
 	defer redis.Close()
 	infoByte, _ := tools.JSONEncode(info)
-	err := redis.Set(key, infoByte, SUBMITLIFE).Error
+
+	var exp int
+	if len(ttl) > 0 {
+		exp = ttl[0]
+	} else {
+		exp = SUBMITLIFE
+	}
+
+	err := redis.Set(key, infoByte, exp).Error
 	if err != nil {
 		logs.Error(err, "SESSION_MODEL_SAVE_ERROR")
 	}

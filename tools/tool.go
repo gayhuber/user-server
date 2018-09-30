@@ -172,3 +172,13 @@ func Map2Struct(mp map[string]interface{}, v interface{}) error {
 	}
 	return json.Unmarshal(by, v)
 }
+
+// CalculateTTL 计算到达十天后凌晨4点的秒数
+func CalculateTTL() int {
+	now := time.Now()
+	h := time.Date(now.Year(), now.Month(), now.Day(), int(4), int(0), int(0), int(0), time.Local)
+	target, _ := time.ParseDuration("240h")
+	new := h.Add(target)
+	ttl := new.Sub(now).Seconds()
+	return int(ttl)
+}
