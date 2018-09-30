@@ -131,7 +131,8 @@ func MobileSms(session *lib.Session) {
 	session.Send(code, resp)
 }
 
-// Home 首页信息
+// MobileHome 首页信息
+// TODO: 改成和php 版一样的返回内容
 func MobileHome(session *lib.Session) {
 	auth := MobileAuth{}
 	auth.setParams(session.Request.Params)
