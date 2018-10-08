@@ -10,6 +10,7 @@ import (
 	"math/rand"
 	"net/http"
 	"reflect"
+	"strconv"
 	"strings"
 	"time"
 	"user-server/config"
@@ -181,4 +182,19 @@ func CalculateTTL() int {
 	new := h.Add(target)
 	ttl := new.Sub(now).Seconds()
 	return int(ttl)
+}
+
+// String2Int 转义
+func String2Int(s string) (int, error) {
+	return strconv.Atoi(s)
+}
+
+// Strintg2Int64 转义
+func Strintg2Int64(s string) (int64, error) {
+	return strconv.ParseInt(s, 10, 64)
+}
+
+// Int64ToString 转义
+func Int64ToString(i int64) string {
+	return strconv.FormatInt(i, 10)
 }

@@ -65,7 +65,7 @@ func map2Struct(mp map[string]interface{}, v interface{}) error {
 	return json.Unmarshal(by, v)
 }
 
-func TestCallback(t *testing.T) {
+func TestCallback1(t *testing.T) {
 	args := map[string]interface{}{
 		"mobile": "18333636949",
 	}
@@ -149,6 +149,29 @@ func TestCallback4(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
+}
+
+func TestCallback5(t *testing.T) {
+	ServiceMp.AddMethod("getSimpleUserInfoById", BaseClient{
+		Module: "User",
+		Class:  "UserNew",
+		Func:   "getSimpleUserInfoById",
+	})
+
+	info, err := GetSimpleUserInfoByID(20532096, false, []string{"uid", "user_name", "avatar", "login_mobile"})
+
+	fmt.Println(info, err)
+}
+
+func TestCallback6(t *testing.T) {
+	ServiceMp.AddMethod("getServiceProductOrderId", BaseClient{
+		Module: "Order",
+		Class:  "Order",
+		Func:   "getServiceProductOrderId",
+	})
+
+	info, err := GetServiceProductOrderID(20532096, 1, 10, 1, 1)
+	fmt.Println(info, err)
 }
 
 // SendMobileSmsCode 发送远程短信
@@ -245,5 +268,27 @@ func QuickMobileLogin(mobile, smsCode, countryCode string, sys int) (responseDat
 		return resp.ResponseData, nil
 	}
 	err = errors.New(resp.ErrorMsg)
+	return
+}
+
+// GetServiceProductOrderID 获取订单信息
+func GetServiceProductOrderID(uid, beging, limit, Type, group int) (info map[string]interface{}, err error) {
+
+	arg := args{
+		"uid":   uid,
+		"begin": beging,
+		"limit": limit,
+		"type":  Type,
+		"group": group,
+	}
+
+	res, err := RemoteFunc("getServiceProductOrderId", arg)
+	fmt.Println("remote getServiceProductOrderId:", res, err)
+
+	if err != nil {
+		return
+	}
+
+	info = respHandler(res)
 	return
 }

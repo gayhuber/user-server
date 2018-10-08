@@ -1,6 +1,7 @@
 package models
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"time"
@@ -21,6 +22,17 @@ type MobileAuth struct {
 	Ext         map[string]interface{}
 	IP          string
 	Token       string
+}
+
+type tokenBody struct {
+	UID         string `json:"uid"`
+	Token       string `json:"token"`
+	LoginMobile string
+	LoginName   string
+	NewUser     int    `json:"new_user"`
+	XYToken     string `json:"xy_token"`
+	Avatar      string
+	Gendre      string
 }
 
 func (auth *MobileAuth) getName() string {
@@ -65,7 +77,31 @@ func (auth *MobileAuth) home() (code int, obj interface{}) {
 	if err != nil {
 		return 400, err
 	}
-	return 200, resp
+
+	userInfo := tokenBody{}
+	json.Unmarshal(resp, &userInfo)
+	uid, _ := tools.String2Int(userInfo.UID)
+
+	info, err := GetSimpleUserInfoByID(uid, false, []string{"uid", "user_name", "avatar", "login_mobile"})
+	if err != nil {
+		return 400, err
+	}
+
+	orderInfo, err := GetServiceProductOrderID(uid, 1, 10, 1, 1)
+	if err != nil {
+		return 400, err
+	}
+
+	_, ok := orderInfo["total"]
+	if ok {
+		info["unpaid_order"] = orderInfo["total"]
+	} else {
+		info["unpaid_order"] = 0
+	}
+
+	info["kefu_mobile"] = "4001816660"
+
+	return 200, info
 }
 func (auth *MobileAuth) generateToken(uid int) string {
 	tmp := fmt.Sprintf("%d%s%s", uid, USERKEY, time.Now().String())

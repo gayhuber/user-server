@@ -42,6 +42,12 @@ func init() {
 		Class:  "UserNew",
 		Func:   "getSimpleUserInfoById",
 	})
+
+	hprose.ServiceMp.AddMethod("getServiceProductOrderId", hprose.BaseClient{
+		Module: "Order",
+		Class:  "Order",
+		Func:   "getServiceProductOrderId",
+	})
 }
 
 // GetXyOpenKey 获取 openkey
@@ -192,4 +198,26 @@ func GetSimpleUserInfoByID(uid int, returnUIDAsKey bool, arrField []string) (inf
 
 	tmp := respHandler(res)
 	return tmp, nil
+}
+
+// GetServiceProductOrderID 获取订单概况
+func GetServiceProductOrderID(uid, beging, limit, Type, group int) (info map[string]interface{}, err error) {
+
+	arg := args{
+		"uid":   uid,
+		"begin": beging,
+		"limit": limit,
+		"type":  Type,
+		"group": group,
+	}
+
+	res, err := hprose.RemoteFunc("getServiceProductOrderId", arg)
+	fmt.Println("remote getServiceProductOrderId:", res, err)
+
+	if err != nil {
+		return
+	}
+
+	info = respHandler(res)
+	return
 }
