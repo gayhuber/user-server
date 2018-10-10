@@ -48,6 +48,12 @@ func init() {
 		Class:  "Order",
 		Func:   "getServiceProductOrderId",
 	})
+
+	hprose.ServiceMp.AddMethod("getUserAccoutInfo", hprose.BaseClient{
+		Module: "Account",
+		Class:  "Account",
+		Func:   "getUserAccoutInfo",
+	})
 }
 
 // GetXyOpenKey 获取 openkey
@@ -98,40 +104,32 @@ func SendMobileSmsCode(mobile, countryCode, ip, Type string) error {
 func respHandler(res interface{}) (tmp map[string]interface{}) {
 	// map 需要初始化一个出来
 	tmp = make(map[string]interface{})
-	// log.Println("input res is : ", res)
 	switch res.(type) {
 	case nil:
-		// log.Printf("nil res: %v", res)
 		return tmp
 	case map[string]interface{}:
-		// log.Printf("map[string]interface{} res: %v", res)
 		return res.(map[string]interface{})
 	case map[interface{}]interface{}:
-		// log.Println("map[interface{}]interface{} res:", res)
 		for k, v := range res.(map[interface{}]interface{}) {
-			// log.Printf("loop: : %v, v: %v \n", k, v)
 			switch k.(type) {
 			case string:
 				switch v.(type) {
 				case map[interface{}]interface{}:
-					// log.Println("map[interface{}]interface{} v:", v)
 					tmp[k.(string)] = respHandler(v)
 					continue
 				default:
-					// log.Printf("default value k: %v , v: %v \n", k, v)
 					tmp[k.(string)] = v
 					continue
 				}
 
 			default:
-				// log.Printf("default key k: %v , v: %v \n", k, v)
 				continue
 			}
 		}
 		return tmp
 	default:
 		// 暂时没遇到更复杂的数据
-		log.Println("unknow data:", res)
+		log.Println("[respHandler] unknow data:", res)
 	}
 	return tmp
 }
@@ -162,7 +160,7 @@ func QuickMobileLogin(mobile, smsCode, countryCode string, sys int) (responseDat
 	}
 
 	res, err := hprose.RemoteFunc("quickMobileLogin", arg)
-	fmt.Println("remote QuickMobileLogin:", res, err)
+	// fmt.Println("remote QuickMobileLogin:", res, err)
 
 	if err != nil {
 		return
@@ -190,7 +188,7 @@ func GetSimpleUserInfoByID(uid int, returnUIDAsKey bool, arrField []string) (inf
 	}
 
 	res, err := hprose.RemoteFunc("getSimpleUserInfoById", arg)
-	fmt.Println("remote GetSimpleUserInfoById:", res, err)
+	// fmt.Println("remote GetSimpleUserInfoById:", res, err)
 
 	if err != nil {
 		return
@@ -212,7 +210,25 @@ func GetServiceProductOrderID(uid, beging, limit, Type, group int) (info map[str
 	}
 
 	res, err := hprose.RemoteFunc("getServiceProductOrderId", arg)
-	fmt.Println("remote getServiceProductOrderId:", res, err)
+	// fmt.Println("remote getServiceProductOrderId:", res, err)
+
+	if err != nil {
+		return
+	}
+
+	info = respHandler(res)
+	return
+}
+
+// GetUserAccoutInfo 获取用户账户余额
+func GetUserAccoutInfo(uid int) (info map[string]interface{}, err error) {
+	arg := args{
+		"uid": uid,
+	}
+
+	// fmt.Println("before exec", arg)
+	res, err := hprose.RemoteFunc("getUserAccoutInfo", arg)
+	fmt.Println("remote getUserAccoutInfo:", res, err)
 
 	if err != nil {
 		return

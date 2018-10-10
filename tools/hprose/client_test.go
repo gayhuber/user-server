@@ -174,6 +174,17 @@ func TestCallback6(t *testing.T) {
 	fmt.Println(info, err)
 }
 
+func TestCallback7(t *testing.T) {
+	ServiceMp.AddMethod("getUserAccoutInfo", BaseClient{
+		Module: "Account",
+		Class:  "Account",
+		Func:   "getUserAccoutInfo",
+	})
+
+	info, err := GetUserAccoutInfo(20532096)
+	fmt.Println("result:", info, err)
+}
+
 // SendMobileSmsCode 发送远程短信
 func SendMobileSmsCode(mobile, countryCode, ip, Type string) error {
 	openKey, err := GetXyOpenKey(mobile)
@@ -284,6 +295,22 @@ func GetServiceProductOrderID(uid, beging, limit, Type, group int) (info map[str
 
 	res, err := RemoteFunc("getServiceProductOrderId", arg)
 	fmt.Println("remote getServiceProductOrderId:", res, err)
+
+	if err != nil {
+		return
+	}
+
+	info = respHandler(res)
+	return
+}
+
+func GetUserAccoutInfo(uid int) (info map[string]interface{}, err error) {
+	arg := args{
+		"uid": uid,
+	}
+
+	res, err := RemoteFunc("getUserAccoutInfo", arg)
+	fmt.Println("remote getUserAccoutInfo:", res, err)
 
 	if err != nil {
 		return

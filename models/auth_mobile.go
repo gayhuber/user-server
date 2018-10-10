@@ -24,17 +24,6 @@ type MobileAuth struct {
 	Token       string
 }
 
-type tokenBody struct {
-	UID         string `json:"uid"`
-	Token       string `json:"token"`
-	LoginMobile string
-	LoginName   string
-	NewUser     int    `json:"new_user"`
-	XYToken     string `json:"xy_token"`
-	Avatar      string
-	Gendre      string
-}
-
 func (auth *MobileAuth) getName() string {
 	return "MobileAuth"
 }
@@ -86,6 +75,8 @@ func (auth *MobileAuth) home() (code int, obj interface{}) {
 	if err != nil {
 		return 400, err
 	}
+	mobile := info["login_mobile"].(string)
+	info["login_mobile"] = mobile[:3] + "*****" + mobile[8:]
 
 	orderInfo, err := GetServiceProductOrderID(uid, 1, 10, 1, 1)
 	if err != nil {
@@ -102,6 +93,31 @@ func (auth *MobileAuth) home() (code int, obj interface{}) {
 	info["kefu_mobile"] = "4001816660"
 
 	return 200, info
+}
+func (auth *MobileAuth) account() (code int, obj interface{}) {
+	userInfo, err := NewSession(auth.Token, "mobile").infoStruct()
+	if err != nil {
+		return 400, err
+	}
+
+	uid, _ := tools.String2Int(userInfo.UID)
+
+	account, err := GetUserAccoutInfo(uid)
+
+	if err != nil {
+		return 400, err
+	}
+
+	var balance string
+	if len(account) > 0 {
+		balance = account["total_amount"].(string)
+	} else {
+		balance = "0.00"
+	}
+
+	return 200, lib.H{
+		"balance": balance,
+	}
 }
 func (auth *MobileAuth) generateToken(uid int) string {
 	tmp := fmt.Sprintf("%d%s%s", uid, USERKEY, time.Now().String())
@@ -168,10 +184,17 @@ func MobileSms(session *lib.Session) {
 }
 
 // MobileHome 首页信息
-// TODO: 改成和php 版一样的返回内容
 func MobileHome(session *lib.Session) {
 	auth := MobileAuth{}
 	auth.setParams(session.Request.Params)
 	code, resp := auth.home()
+	session.Send(code, resp)
+}
+
+// MobileAccount 钱包信息
+func MobileAccount(session *lib.Session) {
+	auth := MobileAuth{}
+	auth.setParams(session.Request.Params)
+	code, resp := auth.account()
 	session.Send(code, resp)
 }
