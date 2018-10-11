@@ -120,7 +120,7 @@ func (auth *MobileAuth) homeNew() (code int, obj interface{}) {
 	go func(infoChan chan<- map[string]interface{}, errChan chan<- error) {
 		defer wg.Done()
 		info, err := GetSimpleUserInfoByID(uid, false, []string{"uid", "user_name", "avatar", "login_mobile"})
-		fmt.Println("GetSimpleUserInfoByID result:", info, err)
+
 		if err != nil {
 			errChan <- err
 			return
@@ -135,7 +135,6 @@ func (auth *MobileAuth) homeNew() (code int, obj interface{}) {
 		} else {
 			info["login_mobile"] = ""
 		}
-		fmt.Println("output info:", info)
 
 		infoChan <- info
 	}(infoChan, errChan)
@@ -160,11 +159,8 @@ func (auth *MobileAuth) homeNew() (code int, obj interface{}) {
 		return
 	}(accountTotalChan, errChan)
 
-	fmt.Println("wait... \n")
 	wg.Wait()
-	fmt.Println("done... \n")
 
-	fmt.Println("errChan len is :", len(errChan))
 	if len(errChan) > 0 {
 		return 400, <-errChan
 	}
@@ -173,7 +169,6 @@ func (auth *MobileAuth) homeNew() (code int, obj interface{}) {
 	info["kefu_mobile"] = "4001816660"
 	info["unpaid_order"] = <-accountTotalChan
 
-	fmt.Println("info: ", info)
 	return 200, info
 }
 
