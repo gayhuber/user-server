@@ -2,8 +2,10 @@ package models
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strconv"
+	"sync"
 	"time"
 	"user-server/lib"
 	"user-server/tools"
@@ -75,15 +77,19 @@ func (auth *MobileAuth) home() (code int, obj interface{}) {
 	if err != nil {
 		return 400, err
 	}
-	mobile := info["login_mobile"].(string)
-	info["login_mobile"] = mobile[:3] + "*****" + mobile[8:]
+	mobile, ok := info["login_mobile"].(string)
+	if ok {
+		info["login_mobile"] = mobile[:3] + "*****" + mobile[8:]
+	} else {
+		info["login_mobile"] = ""
+	}
 
 	orderInfo, err := GetServiceProductOrderID(uid, 1, 10, 1, 1)
 	if err != nil {
 		return 400, err
 	}
 
-	_, ok := orderInfo["total"]
+	_, ok = orderInfo["total"]
 	if ok {
 		info["unpaid_order"] = orderInfo["total"]
 	} else {
@@ -94,6 +100,83 @@ func (auth *MobileAuth) home() (code int, obj interface{}) {
 
 	return 200, info
 }
+
+func (auth *MobileAuth) homeNew() (code int, obj interface{}) {
+	// 获取用户 uid
+	userInfo, err := NewSession(auth.Token, "mobile").infoStruct()
+	if err != nil {
+		return 400, err
+	}
+	uid, _ := tools.String2Int(userInfo.UID)
+
+	var wg sync.WaitGroup
+	wg.Add(2)
+	errChan := make(chan error, 2)
+	defer close(errChan)
+
+	// 获取用户信息
+	infoChan := make(chan map[string]interface{}, 1)
+	defer close(infoChan)
+	go func(infoChan chan<- map[string]interface{}, errChan chan<- error) {
+		defer wg.Done()
+		info, err := GetSimpleUserInfoByID(uid, false, []string{"uid", "user_name", "avatar", "login_mobile"})
+		fmt.Println("GetSimpleUserInfoByID result:", info, err)
+		if err != nil {
+			errChan <- err
+			return
+		}
+		if len(info) == 0 {
+			errChan <- errors.New("user not found")
+		}
+		mobile, ok := info["login_mobile"].(string)
+
+		if ok {
+			info["login_mobile"] = mobile[:3] + "*****" + mobile[8:]
+		} else {
+			info["login_mobile"] = ""
+		}
+		fmt.Println("output info:", info)
+
+		infoChan <- info
+	}(infoChan, errChan)
+
+	// 获取订单信息
+	accountTotalChan := make(chan interface{}, 1)
+	defer close(accountTotalChan)
+	go func(accountTotalChan chan<- interface{}, errChan chan<- error) {
+		defer wg.Done()
+		orderInfo, err := GetServiceProductOrderID(uid, 1, 10, 1, 1)
+		fmt.Println("GetServiceProductOrderID result:", orderInfo, err)
+		if err != nil {
+			errChan <- err
+			return
+		}
+		_, ok := orderInfo["total"]
+		if ok {
+			accountTotalChan <- orderInfo["total"]
+		} else {
+			accountTotalChan <- 0
+		}
+		return
+	}(accountTotalChan, errChan)
+
+	fmt.Println("wait... \n")
+	wg.Wait()
+	fmt.Println("done... \n")
+
+	fmt.Println("errChan len is :", len(errChan))
+	if len(errChan) > 0 {
+		return 400, <-errChan
+	}
+
+	info := <-infoChan
+	info["kefu_mobile"] = "4001816660"
+	info["unpaid_order"] = <-accountTotalChan
+
+	fmt.Println("info: ", info)
+	return 200, info
+}
+
 func (auth *MobileAuth) account() (code int, obj interface{}) {
 	userInfo, err := NewSession(auth.Token, "mobile").infoStruct()
 	if err != nil {
@@ -187,7 +270,7 @@ func MobileSms(session *lib.Session) {
 func MobileHome(session *lib.Session) {
 	auth := MobileAuth{}
 	auth.setParams(session.Request.Params)
-	code, resp := auth.home()
+	code, resp := auth.homeNew()
 	session.Send(code, resp)
 }
 
