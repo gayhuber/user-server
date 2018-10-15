@@ -82,7 +82,7 @@ func GetBaseClient() (*BaseService, rpc.Client) {
 }
 
 // RemoteFunc 远程调用方法
-func RemoteFunc(key string, args map[string]interface{}) (interface{}, error) {
+func RemoteFunc(key string, args map[string]interface{}, try ...int) (interface{}, error) {
 	base, conn := GetBaseClient()
 	defer conn.Close()
 
@@ -91,5 +91,26 @@ func RemoteFunc(key string, args map[string]interface{}) (interface{}, error) {
 		msg := fmt.Sprintf("service: %s not found", key)
 		return nil, errors.New(msg)
 	}
-	return base.Callback(serv.Module, serv.Class, serv.Func, args)
+	result, err := base.Callback(serv.Module, serv.Class, serv.Func, args)
+
+	_, ok = result.([]interface{})
+	if ok {
+		errMsg := fmt.Sprintf("result return an error format data: %+v", result)
+		err = errors.New(errMsg)
+	}
+
+	if err != nil {
+		tryTime := 0
+		if len(try) > 0 {
+			tryTime = try[0]
+		}
+		fmt.Printf("base.Callback exec err, error: %+v , try: %+v \n", err, tryTime)
+		time.Sleep(time.Microsecond * 500)
+		if tryTime < 3 {
+			tryTime++
+			return RemoteFunc(key, args, tryTime)
+		}
+		return result, err
+	}
+	return result, err
 }

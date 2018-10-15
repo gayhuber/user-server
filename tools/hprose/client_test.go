@@ -36,6 +36,18 @@ func init() {
 		Func:   "getServiceProductOrderId",
 	})
 
+	ServiceMp.AddMethod("getXyOpenKey", BaseClient{
+		Module: "System",
+		Class:  "XyToken",
+		Func:   "getXyOpenKey",
+	})
+
+	ServiceMp.AddMethod("sendMobileSmsCode", BaseClient{
+		Module: "Passport",
+		Class:  "Core\\MobileSmsCode",
+		Func:   "sendMobileSmsCode",
+	})
+
 	// 注册方法
 	ServiceMp.AddMethod("XyToken", BaseClient{
 		Module: "System",
@@ -150,17 +162,6 @@ func TestCallback3(t *testing.T) {
 }
 
 func TestCallback4(t *testing.T) {
-	ServiceMp.AddMethod("getXyOpenKey", BaseClient{
-		Module: "System",
-		Class:  "XyToken",
-		Func:   "getXyOpenKey",
-	})
-
-	ServiceMp.AddMethod("sendMobileSmsCode", BaseClient{
-		Module: "Passport",
-		Class:  "Core\\MobileSmsCode",
-		Func:   "sendMobileSmsCode",
-	})
 
 	mobile := "18610341055"
 	t.Logf("send message to %s", mobile)
@@ -181,7 +182,7 @@ func TestCallback5(t *testing.T) {
 
 	info, err := GetSimpleUserInfoByID(20532096, false, []string{"uid", "user_name", "avatar", "login_mobile"})
 
-	fmt.Println(info, err)
+	t.Log("result: ", info, err)
 }
 
 func TestCallback6(t *testing.T) {
@@ -314,7 +315,7 @@ func GetSimpleUserInfoByID(uid int, returnUIDAsKey bool, arrField []string) (inf
 	}
 
 	res, err := RemoteFunc("getSimpleUserInfoById", arg)
-	fmt.Println("remote GetSimpleUserInfoById:", res, err)
+	fmt.Printf("remote GetSimpleUserInfoById: res: %+v , err: %+v \n", res, err)
 
 	if err != nil {
 		return
