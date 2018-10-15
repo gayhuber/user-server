@@ -47,33 +47,33 @@ func init() {
 func respHandler(res interface{}) (tmp map[string]interface{}) {
 	// map 需要初始化一个出来
 	tmp = make(map[string]interface{})
-	log.Println("input res is : ", res)
+	// log.Println("input res is : ", res)
 	switch res.(type) {
 	case nil:
-		log.Printf("nil res: %v", res)
+		// log.Printf("nil res: %v", res)
 		return tmp
 	case map[string]interface{}:
-		log.Printf("map[string]interface{} res: %v", res)
+		// log.Printf("map[string]interface{} res: %v", res)
 		return res.(map[string]interface{})
 	case map[interface{}]interface{}:
-		log.Println("map[interface{}]interface{} res:", res)
+		// log.Println("map[interface{}]interface{} res:", res)
 		for k, v := range res.(map[interface{}]interface{}) {
-			log.Printf("loop: k: %v, v: %v \n", k, v)
+			// log.Printf("loop: k: %v, v: %v \n", k, v)
 			switch k.(type) {
 			case string:
 				switch v.(type) {
 				case map[interface{}]interface{}:
-					log.Println("map[interface{}]interface{} v:", v)
+					// log.Println("map[interface{}]interface{} v:", v)
 					tmp[k.(string)] = respHandler(v)
 					continue
 				default:
-					log.Printf("default value k: %v , v: %v \n", k, v)
+					// log.Printf("default value k: %v , v: %v \n", k, v)
 					tmp[k.(string)] = v
 					continue
 				}
 
 			default:
-				log.Printf("default key k: %v , v: %v \n", k, v)
+				// log.Printf("default key k: %v , v: %v \n", k, v)
 				continue
 			}
 		}
