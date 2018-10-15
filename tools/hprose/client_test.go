@@ -54,6 +54,13 @@ func init() {
 		Class:  "XyToken",
 		Func:   "getXyOpenKey",
 	})
+
+	ServiceMp.AddMethod("sendSms", BaseClient{
+		Module: "Sms",
+		Class:  "SendSms",
+		Func:   "sendSms",
+		Server: SmsServerkey,
+	})
 }
 
 func respHandler(res interface{}) (tmp map[string]interface{}) {
@@ -116,7 +123,6 @@ func TestCallback1(t *testing.T) {
 	t.Log(res, err)
 }
 
-//
 func TestCallback2(t *testing.T) {
 	ServiceMp.AddMethod("getSimpleUserInfoById", BaseClient{
 		Module: "User",
@@ -146,7 +152,7 @@ func TestCallback3(t *testing.T) {
 		Func:   "quickMobileLogin",
 	})
 
-	code := "464101"
+	code := "938906"
 	mobile := "18610341055"
 
 	resp, err := QuickMobileLogin(mobile, code, "0086", 11)
@@ -263,6 +269,14 @@ func TestCallback8(t *testing.T) {
 	info["unpaid_order"] = <-accountTotalChan
 
 	fmt.Println("info: ", info)
+}
+
+// 测试多server 的调用方式
+func TestCallback9(t *testing.T) {
+	content := "验证码：123456，30分钟内有效。亚洲口碑最好的美容微整专家只在新氧！新氧一下，安心变美~"
+	res, err := SendSms("18610341055", content, 1, 0, "0086", 0, "127.0.0.1")
+
+	t.Logf("res: %+v, err: %+v \n", res, err)
 }
 
 // SendMobileSmsCode 发送远程短信
@@ -391,6 +405,29 @@ func GetUserAccoutInfo(uid int) (info map[string]interface{}, err error) {
 
 	res, err := RemoteFunc("getUserAccoutInfo", arg)
 	fmt.Println("remote getUserAccoutInfo:", res, err)
+
+	if err != nil {
+		return
+	}
+
+	info = respHandler(res)
+	return
+}
+
+// 发送短信
+func SendSms(mobile string, contennt string, iType int, iUID int, countryCode string, flag int, ip string) (info map[string]interface{}, err error) {
+	arg := args{
+		"mobile":      mobile,
+		"content":     contennt,
+		"iType":       iType,
+		"iUid":        iUID,
+		"countryCode": countryCode,
+		"flag":        flag,
+		"ip":          ip,
+	}
+
+	res, err := RemoteFuncPlus("sendSms", arg)
+	fmt.Println("remote sendSms:", res, err)
 
 	if err != nil {
 		return
