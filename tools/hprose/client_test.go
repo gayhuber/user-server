@@ -254,9 +254,9 @@ func TestCallback8(t *testing.T) {
 		return
 	}(accountTotalChan, errChan)
 
-	fmt.Println("wait... \n")
+	fmt.Printf("wait... \n \n")
 	wg.Wait()
-	fmt.Println("done... \n")
+	fmt.Printf("done... \n \n")
 
 	fmt.Println("errChan len is :", len(errChan))
 	if len(errChan) > 0 {
