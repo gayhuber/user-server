@@ -279,50 +279,6 @@ func TestCallback9(t *testing.T) {
 	t.Logf("res: %+v, err: %+v \n", res, err)
 }
 
-// 测试新的远程调用方式, 因为用到了根据服务名调用不同的base server
-// 同时使用了hprose/io组件, 已解决出现的 map[interface{}]interface{} 的问题
-func TestCallback10(t *testing.T) {
-	args := map[string]interface{}{
-		"uid":            20532096,
-		"returnUidAsKey": false,
-		"arrField":       []string{"uid", "user_name", "avatar", "login_mobile"},
-	}
-
-	info, err := RemoteFuncPro("php_base_server", "User", "UserNew", "getSimpleUserInfoById", args)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-
-	jsonByte, err := json.Marshal(info)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-
-	t.Log("result: ", info, err, string(jsonByte))
-}
-
-func TestCallback11(t *testing.T) {
-	args := map[string]interface{}{
-		"mobile": "18333636949",
-	}
-
-	info, err := RemoteFuncPro("php_base_server", "System", "XyToken", "getXyOpenKey", args)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-
-	jsonByte, err := json.Marshal(info)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-
-	t.Log("result: ", info, err, string(jsonByte))
-}
-
 // SendMobileSmsCode 发送远程短信
 func SendMobileSmsCode(mobile, countryCode, ip, Type string) error {
 	openKey, err := GetXyOpenKey(mobile)

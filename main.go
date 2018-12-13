@@ -35,8 +35,7 @@ func main() {
 
 // HandleJSON 处理 json 文件
 func HandleJSON(session *lib.Session) {
-
-	fmt.Println("hello", session.Request)
+	session.Log.Info(session.Request, "GET_REQUEST")
 
 	t1 := time.Now()
 
@@ -44,13 +43,17 @@ func HandleJSON(session *lib.Session) {
 
 	session.Log.Error(body["module"])
 
-	res, _ := hprose.RemoteFuncPro(body["serverName"].(string), body["module"].(string), body["class"].(string), body["func"].(string), body["params"].(map[string]interface{}))
+	res, err := hprose.RemoteFuncPro(body["serverName"].(string), body["module"].(string), body["class"].(string), body["func"].(string), body["params"].([]interface{}))
 
-	session.Log.Info("tesetse")
+	if err != nil {
+		session.Send(200, lib.H{
+			"msg": fmt.Sprintf("%v", err),
+		})
+		return
+	}
 
 	end := time.Since(t1)
-
-	fmt.Println("execute time:", end)
-
+	msg := fmt.Sprintf("execute time: %v", end)
+	session.Log.Info(msg)
 	session.Send(200, res)
 }
