@@ -7,6 +7,7 @@ import (
 	"time"
 	"user-server/lib"
 	"user-server/models"
+	"user-server/tools/hprose"
 )
 
 func server() error {
@@ -37,11 +38,19 @@ func HandleJSON(session *lib.Session) {
 
 	fmt.Println("hello", session.Request)
 
+	t1 := time.Now()
+
+	body := session.Request.Params
+
+	session.Log.Error(body["module"])
+
+	res, _ := hprose.RemoteFuncPro(body["serverName"].(string), body["module"].(string), body["class"].(string), body["func"].(string), body["params"].(map[string]interface{}))
+
 	session.Log.Info("tesetse")
 
-	session.Send(200, lib.H{
-		"message": "this is from server",
-		"param":   "example",
-		"raw":     session.Request.Params,
-	})
+	end := time.Since(t1)
+
+	fmt.Println("execute time:", end)
+
+	session.Send(200, res)
 }
